@@ -1,0 +1,10 @@
+<!--pages/requestSubscribe/index.wxml-->
+<navigation-bar title="约个座位" back="{{false}}" color="white" background="#1e9fff" bindready="onNavigationBarReady"></navigation-bar>
+<view class="page" style="margin-top: {{navigationBarHeight}}px;">
+    <text>pages/requestSubscribe/index.wxml</text>
+
+    <button bind:tap="requestSubscribe"> 订阅通知测试按钮
+    </button>
+    <button bind:tap="returnPage"> 返回
+    </button>
+</view>

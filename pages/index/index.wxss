@@ -1,0 +1,91 @@
+/**index.wxss**/
+
+/* home */
+.input-title {
+    color: rgba(0, 0, 0, 0.9);
+    font-size: 50rpx;
+    font-weight: bold;
+    line-height: 40rpx;
+    text-align: center;
+    letter-spacing: 8px;
+    padding: 8% 0 1%;
+}
+
+.input-tips {
+    color: rgb(82, 82, 82);
+    font-size: 30rpx;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 0 0;
+}
+
+.home-input {
+    font-size: 30rpx;
+    padding: 3% 5%;
+    text-align: center;
+}
+
+.home-picker{
+    --td-cell-height: 40rpx !important;
+    --td-cell-border-width: 3px;
+    --td-cell-border-left-space: 10px;
+    --td-cell-border-right-space: 10px;
+    --td-cell-note-font-size: 28rpx;
+    --td-cell-title-color: rgba(27, 27, 27, 0.747) !important;
+
+}
+
+/* home下方宫格 */
+.grid_block {
+    display: block;
+    margin-bottom: 32rpx;
+}
+
+.page {
+    /* message样式 */
+    --td-message-box-shadow: var(--td-shadow-1,
+            0 5px 10px rgba(0, 0, 0, 5%),
+            0 4px 5px rgba(0, 0, 0, 8%),
+            0 2px 4px -1px rgba(0, 0, 0, 12%));
+    --td-message-content-font-color: red
+}
+
+
+
+.long-content {
+    height: 790rpx;
+    margin-top: 20rpx;
+    font-size: 32rpx;
+    color: rgba(0, 0, 0, 0.733);
+    width: 100%;
+}
+
+.long-content .qatitle {
+    text-align: left;
+    font-size: 40rpx;
+    font-weight: bold;
+    
+    line-height: 130%;
+}
+
+.long-content .qacontent {
+    width: 100%;
+    text-align: left;
+    font-size: 32rpx;
+    color: rgb(112, 112, 112);
+}
+.home-message{
+    --td-message-bg-color: rgba(255, 255, 255, 0.671);
+}
+.atten{
+    color: rgba(240, 150, 32, 0.945);
+    font-weight: bold;
+}
+
+/* my页面 */
+.user-info button::after {
+    border-style: none;
+}
+
+
+@import 'index-wxa-auto-dark.wxss'

@@ -1,0 +1,18 @@
+{
+    "pages": [
+        "pages/index/index",
+        "pages/testpage/index",
+        "pages/requestSubscribe/index"
+    ],
+    "window": {
+        "navigationBarTextStyle": "black",
+        "navigationStyle": "custom"
+    },
+    "renderer": "webview",
+    "componentFramework": "glass-easel",
+    "sitemapLocation": "sitemap.json",
+    "usingComponents": {
+        "t-button": "tdesign-miniprogram/button/button",
+        "t-icon": "tdesign-miniprogram/icon/icon"
+    }
+}

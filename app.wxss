@@ -1,0 +1,22 @@
+/**app.wxss**/
+
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: space-between; */
+    /* padding: 200rpx 0;  */
+    box-sizing: border-box;
+}
+
+navigation-bar {
+    position: fixed;
+    top: 0;
+    /* 距顶部0像素 */
+    width: 100%;
+    /* 宽度占满屏幕 */
+    z-index: 1000;
+}
+
+@import './app-wxa-auto-dark.wxss'

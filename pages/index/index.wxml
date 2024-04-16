@@ -1,0 +1,176 @@
+<!-- index.wxml -->
+<page-meta>
+    <navigation-bar title="约个座位" back="{{false}}" color="white" background="#1e9fff"></navigation-bar>
+</page-meta>
+
+<!-- 消息弹窗 -->
+<t-message id="t-message" class="home-message" />
+
+<view class="page" style="margin-top: {{navigationBarHeight}}px;">
+    <!-- 悬浮按钮区 -->
+    <t-fab icon="chat-bubble-help" bind:click="showHelpInfo" aria-label="联系客服" style="right: 16px; bottom: 190rpx;z-index: 997;"></t-fab>
+    <t-fab icon="check-rectangle" bind:click="showRequestSubscribeMessage" aria-label="订阅通知" style="right: 16px; bottom: 300rpx;z-index: 998;"></t-fab>
+
+    <!-- 联系客服Dialog -->
+    <view>
+        <t-dialog class="home-help-dlg" prevent-scroll-through="false" visible="{{showHelpInfoDlg}}" cancel-btn="关闭" bind:cancel="closeHelpInfo">
+            <view slot="middle" class="home-help-dlg-content">
+                <button open-type="contact" style="text-align: center;margin: 0 5% 32rpx;">🙋点击此处联系客服</button>
+                <scroll-view scroll-y class="long-content">
+                    <view class="content-container">
+                        <view style="text-align: center;font-size: 55rpx;font-weight: bold;padding-top: 32rpx;">常见问题指南💁🏼</view>
+                        <view style="margin: 0 4% 0;">
+                            <text class="qatitle" user-select="true">
+                                1.每天的自动预约时间?</text>
+                            <text decode="true" class="qacontent" space="ensp" user-select="true"> 每天的7:00，系统将自动执行抢座任务，所预约的时间段为<text class="atten">下一天的</text>9:30-22:00 (每周五为20:00结束)。\n\n</text>
+                            <text class="qatitle" user-select="true">2.每天的自动签到时间？</text>
+                            <text decode="true" class="qacontent" space="ensp" user-select="true"> 只要您激活了VIP，无论是否创建了抢座计划，系统都会在每天的7:30-20:00期间，<text class="atten">每30分钟</text>自动检测并为所有需要签到的用户进行签到哦。\n\n</text>
+                            <text class="qatitle" user-select="true">3.如何进行远程签到 or 手动签到？</text>
+                            <text decode="true" class="qacontent" space="ensp" user-select="true"> 请您在网站首页的“座位查询”模块输入座位编号的后三位数字进行搜索，然后选中需要远程签到的座位号。\n请注意：使用此功能必须满足以下<text class="atten">三个条件</text>：\n1、连接上校园网或VPN；\n2、在微信客户端中打开；\n3、此微信已绑定过“南京林业大学图书馆”微信公众号的读者证。\n\n</text>
+                            <text class="qatitle" user-select="true">4.如何查询某个座位的预约记录？</text>
+                            <text decode="true" class="qacontent" space="ensp" user-select="true"> "请您在网站首页的“座位查询”模块输入座位编号的后三位数字进行搜索，然后点击“查询使用记录”。\n如果当前座位有用户正在使用，您也可以在下方的“当前使用人信息”模块看到当前用户的各项信息。"\n\n</text>
+                            <text decode="true" class="qatitle" user-select="true">5.如何查询某个读者的预约记录？</text>
+                            <text class="qacontent" space="ensp" user-select="true"> 请您在网站首页的“预约查询”模块输入学号或者姓名进行搜索。支持按学号或姓名模糊匹配。\n\n</text>
+                            <text class="qatitle" user-select="true">6.如何创建抢座计划？</text>
+                            <text decode="true" class="qacontent" space="ensp" user-select="true"> 请您在网站首页的“自动预约&签到”模块输入您的学号，登陆到管理后台进行操作。\n在管理后台页面，您可以进行创建、查询和删除抢座计划，查询历史预约记录等操作。\n\n</text>
+                            <text class="qatitle" user-select="true">7.网站是免费使用的吗？</text>
+                            <text decode="true" class="qacontent" space="ensp" user-select="true"> 除了自动抢座、自动签到功能外，其他功能您可以免费使用。\n您还可以点击上方按钮或长按扫描下方二维码，获取3天的使用次数。\n\n\n</text>
+                            <view style="text-align: center;margin: 0 auto;width: 100%;">
+                                <image style="width: 100%;zoom: 75%;" lazy-load="true" show-menu-by-longpress="true" src="https://libseat.littleking.site/static/qr_code_20240225libseat.jpg" mode="aspectFit" />
+                            </view>
+                            <text>\n</text>
+                            <text>\n</text>
+                            <text>\n</text>
+                        </view>
+                    </view>
+                </scroll-view>
+            </view>
+        </t-dialog>
+    </view>
+    <!-- 首页View -->
+    <view id="home" hidden="{{isHomeHidden}}">
+        <view class="input-title">座位查询</view>
+        <view class="input-tips">远程签到、查询使用记录、当前使用者</view>
+        <view class="home-input">
+            <t-input bind:change="bindSeatInput" confirm-type="search" placeholder="请输入后三位数字" borderless="true" clearable style="{{home_input_style}}" align="left" label="座位编号:" />
+        </view>
+        <view class="home-picker" style="width: 70%; text-align: center; margin: 0 auto;" hidden="{{isSeatPickerHidden}}">
+            <t-cell-group theme="card" bordered="true">
+                <block wx:for="{{seatList}}" wx:key="index">
+                    <t-cell title="{{item}}" hover note="选择" arrow bind:tap="bindSeatSelect" data-item="{{item}}" />
+                </block>
+            </t-cell-group>
+        </view>
+
+        <t-divider />
+
+        <view class="input-title">预约查询</view>
+        <view class="input-tips">按学号或姓名查询座位预约记录</view>
+        <view class="home-input">
+            <t-input bind:change="bindResvInput" confirm-type="search" placeholder="支持模糊搜索" borderless="true" clearable style="{{home_input_style}}" align="left" label="学号/姓名:" />
+        </view>
+        <view class="home-picker" style="width: 80%; text-align: center; margin: 0 auto;" hidden="{{isStuPickerHidden}}">
+            <t-cell-group theme="card" bordered="true">
+                <block wx:for="{{stuList}}" wx:key="index">
+                    <t-cell title="{{item}}" hover note="选择" arrow bind:tap="bindStuSelect" data-item="{{item}}" />
+                </block>
+            </t-cell-group>
+        </view>
+
+
+
+        <text>\n</text>
+        <t-divider content="功能列表" />
+        <!-- 数据展示区 -->
+        <view class="grid_block">
+            <t-grid column="{{3}}" align="center" hover="true">
+                <!-- 第一列 -->
+                <t-grid-item style="width:25%;">
+                    <text style="font-weight: bold;font-size: 32rpx;text-align: center;margin: 0 0 5rpx">在馆人数\n</text>
+                    <text style="font-size: 25rpx;text-align: center;color:grey">当前在馆 {{inLibCount}}\n</text>
+                    <text style="font-size: 25rpx;text-align: center;color:grey">剩余入馆 {{remainCount}}</text>
+                    <text style="font-weight: bold;font-size: 32rpx;text-align: center;margin: 35rpx 0 5rpx">预约人数\n</text>
+                    <text style="font-size: 25rpx;text-align: center;color:grey">当前预约 {{resvCount}}\n</text>
+                    <text style="font-size: 25rpx;text-align: center;color:grey">剩余可用 {{freeCount}}</text>
+                </t-grid-item>
+                <!-- 第2列环形进度条 -->
+                <t-grid-item style="width:20%;">
+                    <t-progress style="zoom: 55%;" class="home-progress" theme="circle" percentage="{{inLibPercentage}}" />
+                    <t-progress style="zoom: 55%;margin: 50rpx 0 0" class="home-progress" theme="circle" percentage="{{resvPercentage}}" />
+                </t-grid-item>
+                <!-- 第3列环形进度条 -->
+                <t-grid-item style="width:55%;">
+                    <view>
+                        <text style="font-weight: bold;font-size: 32rpx;text-align: center;">各楼层座位预约率\n</text>
+                    </view>
+                    <view style="width: 95%;">
+                        <t-grid column="{{2}}" align="center" hover="true">
+                            <t-grid-item style="width:20%;">
+                                <text style="line-height: 41rpx">2楼</text>
+                                <text style="line-height: 41rpx">3楼</text>
+                                <text style="line-height: 41rpx">4楼</text>
+                                <text style="line-height: 41rpx">5楼</text>
+                                <text style="line-height: 41rpx">6楼</text>
+                            </t-grid-item>
+                            <t-grid-item style="width:80%;">
+                                <view style="width: 80%;margin: 11rpx;">
+                                    <t-progress class="home-progress" theme="plump" percentage="{{_2fPer}}" style="zoom: 50%;" status="{{_2fPer > 70 ? 'error' : (_2fPer > 50 ? 'warning' : 'success')}}" />
+                                </view>
+                                <view style="width: 80%;margin: 11rpx;">
+                                    <t-progress class="home-progress" theme="plump" percentage="{{_3fPer}}" style="zoom: 50%;" status="{{_3fPer > 70 ? 'error' : (_3fPer > 50 ? 'warning' : 'success')}}" />
+                                </view>
+                                <view style="width: 80%;margin: 11rpx;">
+                                    <t-progress class="home-progress" theme="plump" percentage="{{_4fPer}}" style="zoom: 50%;" status="{{_4fPer > 70 ? 'error' : (_4fPer > 50 ? 'warning' : 'success')}}" />
+                                </view>
+                                <view style="width: 80%;margin: 11rpx;">
+                                    <t-progress class="home-progress" theme="plump" percentage="{{_5fPer}}" style="zoom: 50%;" status="{{_5fPer > 70 ? 'error' : (_5fPer > 50 ? 'warning' : 'success')}}" />
+                                </view>
+                                <view style="width: 80%;margin: 11rpx;">
+                                    <t-progress class="home-progress" theme="plump" percentage="{{_6fPer}}" style="zoom: 50%;" status="{{_6fPer > 70 ? 'error' : (_6fPer > 50 ? 'warning' : 'success')}}" />
+                                </view>
+                            </t-grid-item>
+                        </t-grid>
+                    </view>
+                </t-grid-item>
+            </t-grid>
+        </view>
+        <text>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n</text>
+    </view>
+    <!-- 预约View -->
+    <view id="resv" hidden="{{isResvHidden}}">111111</view>
+    <!-- 我的View -->
+    <view id="my" hidden="{{isMyHidden}}">
+        <view class="user-info" style="text-align: center;margin: 0 auto;padding: 10% 0 0;">
+            <button open-type="chooseAvatar" style="background-color: rgba(0, 0, 0, 0);width: 50%;" bind:chooseavatar="onChooseAvatar">
+                <t-avatar class="avatar-example" shape="round" icon="user" size="100px" link="{{avatarUrl}}" />
+            </button>
+            <view style="padding-top: 10rpx;font-size: 36rpx;">
+                <t-badge count="未登录" shape="bubble" ariaRole="button">
+                    <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
+                </t-badge>
+            </view>
+
+
+
+
+        </view>
+
+
+
+
+
+
+
+
+    </view>
+    <!-- 底部TabBar -->
+    <view>
+        <t-tab-bar class="index-tab-bar" value="{{currentPage}}" bindchange="changePages" shape="round" theme="tag" split="true">
+            <t-tab-bar-item value="home" icon="home" ariaLabel="首页">首页</t-tab-bar-item>
+            <t-tab-bar-item value="resv" icon="assignment-checked" ariaLabel="自动预约&签到">
+                自动预约&签到
+            </t-tab-bar-item>
+            <t-tab-bar-item value="my" icon="user" ariaLabel="我的">我的</t-tab-bar-item>
+        </t-tab-bar>
+    </view>
+</view>
