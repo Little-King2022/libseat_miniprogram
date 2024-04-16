@@ -1,7 +1,0 @@
-{
-  "component": true,
-  "usingComponents": {
-    "t-button": "../button/button",
-    "t-draggable": "./draggable/draggable"
-  }
-}

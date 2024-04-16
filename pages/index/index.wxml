@@ -93,6 +93,7 @@
                     <text style="font-size: 25rpx;text-align: center;color:grey">当前预约 {{resvCount}}\n</text>
                     <text style="font-size: 25rpx;text-align: center;color:grey">剩余可用 {{freeCount}}</text>
                 </t-grid-item>
+                
                 <!-- 第2列环形进度条 -->
                 <t-grid-item style="width:20%;">
                     <t-progress style="zoom: 55%;" class="home-progress" theme="circle" percentage="{{inLibPercentage}}" />
