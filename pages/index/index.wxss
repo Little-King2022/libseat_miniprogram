@@ -64,14 +64,13 @@
     text-align: left;
     font-size: 40rpx;
     font-weight: bold;
-    
     line-height: 130%;
 }
 
 .long-content .qacontent {
     width: 100%;
     text-align: left;
-    font-size: 32rpx;
+    font-size: 28rpx;
     color: rgb(112, 112, 112);
 }
 .home-message{

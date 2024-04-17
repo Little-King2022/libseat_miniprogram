@@ -1,8 +1,9 @@
 {
     "pages": [
         "pages/index/index",
-        "pages/testpage/index",
-        "pages/requestSubscribe/index"
+        "pages/requestSubscribe/index",
+        "pages/seat/index",
+        "pages/stu/index"
     ],
     "window": {
         "navigationBarTextStyle": "black",

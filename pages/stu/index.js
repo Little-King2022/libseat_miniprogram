@@ -1,0 +1,1 @@
+// pages/stu/index.js

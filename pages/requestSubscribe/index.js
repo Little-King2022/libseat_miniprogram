@@ -17,26 +17,20 @@ Page({
         wx.navigateBack({
             delta: 1,
         });
-
     },
 
-    /**
-     * 页面的初始数据
-     */
     data: {
 
     },
 
-
-    /**
-     * 生命周期函数--监听页面初次渲染完成
-     */
+    onLoad: function (options) {
+        console.log(options.seat); 
+    },
     onReady() {
         // 标题栏高度
         const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 44;
         this.setData({
             navigationBarHeight: navigationBarHeight
         });
-
     },
 })

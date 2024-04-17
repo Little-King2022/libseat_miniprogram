@@ -13,6 +13,24 @@ Page({
             path: 'pages/index/index',
         }
     },
+    onReady() {
+        // 标题栏高度设置
+        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 44;
+        this.setData({
+            navigationBarHeight: navigationBarHeight,
+        });
+
+        this.getLibNum();
+        this.getResvNum();
+
+        // 每分钟执行一次
+        setInterval(() => {
+            this.getLibNum();
+            this.getResvNum();
+
+        }, 10000);
+    },
+
     data: {
         navigationBarHeight: 44, // 初始化导航栏高度为0
         home_input_style: 'border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:30rpx',
@@ -42,13 +60,7 @@ Page({
     methods: {
 
     },
-    // clickMsg() {
-    //     console.log("click");
-    //     wx.navigateTo({
-    //         url: '/pages/requestSubscribe/index',
-    //     })
 
-    // },
     showRequestSubscribeMessage() {
         // 计算偏移量
         const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 39;
@@ -66,7 +78,7 @@ Page({
             link: {
                 content: '点击订阅通知',
                 navigatorProps: {
-                    url: '/pages/requestSubscribe/index',
+                    url: '/pages/requestSubscribe/index?seat=123',
                 },
             },
         });
@@ -202,10 +214,16 @@ Page({
     },
 
     bindSeatSelect(e) {
-        console.log(e.target.dataset.item);
+        var seat_name = e.target.dataset.item;
+        wx.navigateTo({
+            url: '/pages/seat/index?seat_name=' + seat_name,
+        })
     },
     bindStuSelect(e) {
-        console.log(e.target.dataset.item);
+        var stu_id = (e.target.dataset.item);
+        wx.navigateTo({
+            url: '/pages/stu/index?stu_id=' + stu_id,
+        })
     },
 
 
@@ -252,22 +270,6 @@ Page({
         console.log('after');
     },
 
-    onReady() {
-        // 标题栏高度设置
-        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 44;
-        this.setData({
-            navigationBarHeight: navigationBarHeight
-        });
-
-        this.getLibNum();
-        this.getResvNum();
-
-        // 每分钟执行一次
-        setInterval(() => {
-            this.getLibNum();
-            this.getResvNum();
-
-        }, 10000);
-    },
+    
 
 })
