@@ -13,24 +13,17 @@ Page({
             }
         })
     },
-    returnPage() {
-        wx.navigateBack({
-            delta: 1,
+    // 导航栏按钮控制
+    onBack() {
+        wx.navigateBack();
+    },
+    onGoHome() {
+        wx.reLaunch({
+            url: '/pages/index/index',
         });
     },
 
     data: {
 
-    },
-
-    onLoad: function (options) {
-        console.log(options.seat); 
-    },
-    onReady() {
-        // 标题栏高度
-        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 44;
-        this.setData({
-            navigationBarHeight: navigationBarHeight
-        });
     },
 })

@@ -1,2 +1,124 @@
 <!--pages/stu/index.wxml-->
-<text>pages/stu/index.wxml</text>
+<t-navbar title="读者查询" class="navbar">
+    <view slot="capsule" class="custom-capsule">
+        <t-icon size="20" bind:tap="onBack" aria-role="button" aria-label="返回" name="chevron-left" class="custom-capsule__icon" />
+        <t-icon size="20" bind:tap="onGoHome" aria-role="button" aria-label="首页" name="home" class="custom-capsule__icon" />
+    </view>
+</t-navbar>
+<view class="page">
+    <text>\n</text>
+    <view style="text-align: center;margin: 20rpx auto;">您当前选择的读者：{{stuId}}</view>
+    <view hidden="{{showAllButton}}" style="margin: 20rpx 30rpx 50rpx;">
+        <t-button bind:tap="showAll" theme="light" size="large" block>仅展示近30条记录 点击全部显示</t-button>
+    </view>
+    <view>
+        <t-dialog visible="{{showResvDetail}}" class="resv_detail" prevent-scroll-through="true" cancel-btn="关闭" bind:cancel="closeResvDetail">
+            <view slot="middle" class="container">
+                <scroll-view scroll-x class="long-content">
+                    <view class="detail-table">
+                        <view class="table-row">
+                            <view class="table-cell header">座位号</view>
+                            <view class="table-cell header">学号姓名</view>
+                            <view class="table-cell header">操作时间</view>
+                            <view class="table-cell header">操作类型</view>
+                            <view class="table-cell header">操作设备</view>
+                        </view>
+                        <!-- 使用wx:for循环遍历数据并渲染到表格中 -->
+                        <block wx:for="{{resvDetailList}}" wx:key="index">
+                            <view class="table-row">
+                                <view class="table-cell">{{item.devName}}</view>
+                                <view class="table-cell">{{item.logonName + '\n' + item.trueName}}</view>
+                                <view class="table-cell">{{utils.timestampToTime(item.createTime)}}</view>
+                                <view class="table-cell">{{utils.optionType(item.kind)}}</view>
+                                <view class="table-cell">{{utils.optionDev(item.consoleKind)}}</view>
+                            </view>
+                        </block>
+                    </view>
+                </scroll-view>
+            </view>
+        </t-dialog>
+    </view>
+    <scroll-view scroll-x scroll-y class="container">
+        <view class="table">
+            <view class="table-row">
+                <view class="table-cell header">学号姓名</view>
+                <view class="table-cell header">座位号</view>
+                <view class="table-cell header">创建时间</view>
+                <view class="table-cell header">操作记录</view>
+            </view>
+            <!-- 使用wx:for循环遍历数据并渲染到表格中 -->
+            <block wx:for="{{studentList}}" wx:key="index">
+                <view class="table-row">
+                    <view class="table-cell"><text>{{item.stu_id}}\n{{item.stu_name}}</text></view>
+                    <view class="table-cell">{{item.dev_name}}</view>
+                    <view class="table-cell">{{item.creat_time}}</view>
+                    <view class="table-cell">
+                        <t-button class="button" theme="light" variant="outline" custom-dataset="{{item.resvid}}" bind:tap="getDetail">查看</t-button>
+                    </view>
+                </view>
+            </block>
+        </view>
+
+    </scroll-view>
+</view>
+<wxs module="utils">
+    function timestampToTime(timestamp) {
+        var date = getDate(timestamp);
+        var Y = date.getFullYear().toString().substring(2) + '-';
+        var M = (date.getMonth() + 1 < 10 ? '0' : '') + (date.getMonth() + 1) + '-';
+        var D = (date.getDate() < 10 ? '0' : '') + date.getDate() + ' ';
+        var h = (date.getHours() < 10 ? '0' : '') + date.getHours() + ':';
+        var m = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ':';
+        var s = (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
+
+        return Y + M + D + h + m + s;
+    }
+    function optionType(type) {
+        switch (parseInt(type)) {
+            case 1:
+                return "预约成功";
+            case 2:
+                return "已生效";
+            case 4:
+                return "已签到";
+            case 8:
+                return "暂离";
+            case 16:
+                return "暂离返回";
+            case 32:
+                return "已结束";
+            case 64:
+                return "预约结束后操作";
+            case 128:
+                return "已违约";
+            default:
+                return "未知状态";
+        }
+    }
+    function optionDev(dev) {
+        switch (parseInt(dev)) {
+            case 1:
+                return "系统";
+            case 2:
+                return "二维码";
+            case 4:
+                return "手机";
+            case 8:
+                return "闸机";
+            case 16:
+                return "电脑";
+            case 32:
+                return "现场终端";
+            case 64:
+                return "管理员";
+            default:
+                return "未知类型";
+        }
+    }
+
+    module.exports = {
+        timestampToTime: timestampToTime,
+        optionType: optionType,
+        optionDev: optionDev
+    }
+</wxs>

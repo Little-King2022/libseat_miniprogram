@@ -25,7 +25,7 @@
     text-align: center;
 }
 
-.home-picker{
+.home-picker {
     --td-cell-height: 40rpx !important;
     --td-cell-border-width: 3px;
     --td-cell-border-left-space: 10px;
@@ -73,10 +73,12 @@
     font-size: 28rpx;
     color: rgb(112, 112, 112);
 }
-.home-message{
+
+.home-message {
     --td-message-bg-color: rgba(255, 255, 255, 0.671);
 }
-.atten{
+
+.atten {
     color: rgba(240, 150, 32, 0.945);
     font-weight: bold;
 }

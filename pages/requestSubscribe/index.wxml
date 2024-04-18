@@ -1,10 +1,29 @@
 <!--pages/requestSubscribe/index.wxml-->
-<navigation-bar title="约个座位" back="{{false}}" color="white" background="#1e9fff" bindready="onNavigationBarReady"></navigation-bar>
-<view class="page" style="margin-top: {{navigationBarHeight}}px;">
+<t-navbar title="订阅通知" class="navbar">
+    <view slot="capsule" class="custom-capsule">
+    <t-icon
+      size="20"
+      bind:tap="onBack"
+      aria-role="button"
+      aria-label="返回"
+      name="chevron-left"
+      class="custom-capsule__icon"
+    />
+    <t-icon
+      size="20"
+      bind:tap="onGoHome"
+      aria-role="button"
+      aria-label="首页"
+      name="home"
+      class="custom-capsule__icon"
+    />
+  </view>
+</t-navbar>
+
+<view class="page">
     <text>pages/requestSubscribe/index.wxml</text>
 
     <button bind:tap="requestSubscribe"> 订阅通知测试按钮
     </button>
-    <button bind:tap="returnPage"> 返回
-    </button>
+    
 </view>

@@ -1,1 +1,52 @@
 /* pages/stu/index.wxss */
+.container {
+    padding: 0;
+    text-align: center;
+}
+
+.table {
+    width: 110%;
+    border-collapse: collapse;
+}
+.detail-table {
+    width: 140%;
+    border-collapse: collapse;
+}
+
+.table-row {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+
+.header {
+    font-weight: bolder;
+    font-size: 32rpx !important;
+}
+
+.table-cell {
+    font-size: 28rpx;
+    flex: 1;
+    padding: 5px;
+    text-align: center;
+    /* 水平居中 */
+    align-items: center;
+    /* 垂直居中 */
+    display: flex;
+    /* 使用 Flex 布局 */
+    justify-content: center;
+    /* 水平居中 */
+    width: min-content;
+}
+
+/* 奇数行背景色 */
+.table-row:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+.long-content {
+    height: 700rpx;
+    margin-top: 20rpx;
+    font-size: 32rpx;
+    color: rgba(0, 0, 0, 0.733);
+    width: 100%;
+}

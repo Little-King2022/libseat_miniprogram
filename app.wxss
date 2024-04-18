@@ -1,22 +1,31 @@
 /**app.wxss**/
-
-.container {
-    height: 100%;
+/* navbar */
+.navbar{
+    --td-navbar-color: #fff;
+    --td-navbar-bg-color: #1e9fff;
+}
+.custom-capsule {
+    width: 100%;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    /* justify-content: space-between; */
-    /* padding: 200rpx 0;  */
-    box-sizing: border-box;
+    justify-content: center;
 }
 
-navigation-bar {
-    position: fixed;
-    top: 0;
-    /* 距顶部0像素 */
-    width: 100%;
-    /* 宽度占满屏幕 */
-    z-index: 1000;
+.custom-capsule__icon {
+    flex: 1;
+    position: relative;
+}
+
+.custom-capsule__icon+.custom-capsule__icon:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 36rpx;
+    background: #e7e7e7;
 }
 
 @import './app-wxa-auto-dark.wxss'

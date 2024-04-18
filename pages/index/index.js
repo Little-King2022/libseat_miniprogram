@@ -9,16 +9,16 @@ Page({
     // 自定义分享卡片
     onShareAppMessage() {
         return {
-            title: 'NJFU图书馆座位预约',
+            title: '我发现了一个很好用的座位预约小程序，推荐给你～',
             path: 'pages/index/index',
         }
     },
     onReady() {
         // 标题栏高度设置
-        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 44;
-        this.setData({
-            navigationBarHeight: navigationBarHeight,
-        });
+        // const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 44;
+        // this.setData({
+        //     navigationBarHeight: navigationBarHeight,
+        // });
 
         this.getLibNum();
         this.getResvNum();
@@ -27,12 +27,10 @@ Page({
         setInterval(() => {
             this.getLibNum();
             this.getResvNum();
-
-        }, 10000);
+        }, 20000);
     },
 
     data: {
-        navigationBarHeight: 44, // 初始化导航栏高度为0
         home_input_style: 'border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:30rpx',
         showHelpInfoDlg: false,
         isHomeHidden: false,
@@ -55,7 +53,6 @@ Page({
         freeCount: 0,
         inLibCount: 0,
         remainCount: 0,
-
     },
     methods: {
 
@@ -63,7 +60,7 @@ Page({
 
     showRequestSubscribeMessage() {
         // 计算偏移量
-        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 39;
+        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 110 +'rpx';
         Message.info({
             context: this,
             offset: [navigationBarHeight, 20],
@@ -214,13 +211,13 @@ Page({
     },
 
     bindSeatSelect(e) {
-        var seat_name = e.target.dataset.item;
+        var seat = e.target.dataset.item;
         wx.navigateTo({
-            url: '/pages/seat/index?seat_name=' + seat_name,
+            url: '/pages/seat/index?seat=' + seat,
         })
     },
     bindStuSelect(e) {
-        var stu_id = (e.target.dataset.item);
+        var stu_id = (e.target.dataset.item).match(/.*\d+/g);
         wx.navigateTo({
             url: '/pages/stu/index?stu_id=' + stu_id,
         })
@@ -250,7 +247,6 @@ Page({
             },
             dataType: 'json',
             success: (res) => {
-                console.log(res)
                 var stuList = res['data']['stu_list']
                 this.setData({
                     stuList: stuList

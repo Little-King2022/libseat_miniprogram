@@ -1,12 +1,13 @@
 <!-- index.wxml -->
-<page-meta>
+<!-- <page-meta>
     <navigation-bar title="约个座位" back="{{false}}" color="white" background="#1e9fff"></navigation-bar>
-</page-meta>
+</page-meta> -->
+<t-navbar title="约个座位" class="navbar"></t-navbar>
 
 <!-- 消息弹窗 -->
 <t-message id="t-message" class="home-message" />
 
-<view class="page" style="margin-top: {{navigationBarHeight}}px;">
+<view class="page" >
     <!-- 悬浮按钮区 -->
     <t-fab icon="chat-bubble-help" bind:click="showHelpInfo" aria-label="联系客服" style="right: 16px; bottom: 190rpx;z-index: 997;"></t-fab>
     <t-fab icon="check-rectangle" bind:click="showRequestSubscribeMessage" aria-label="订阅通知" style="right: 16px; bottom: 300rpx;z-index: 998;"></t-fab>
@@ -60,7 +61,7 @@
 
         <t-divider />
 
-        <view class="input-title">预约查询</view>
+        <view class="input-title">读者查询</view>
         <view class="input-tips">按学号或姓名查询座位预约记录</view>
         <view class="home-input">
             <t-input bind:change="bindResvInput" confirm-type="search" placeholder="支持模糊搜索" borderless="true" clearable style="{{home_input_style}}" align="left" label="学号/姓名:" />

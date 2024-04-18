@@ -1,66 +1,143 @@
-// pages/seat/index.js
+// pages/stu/index.js
+// 分享权限控制
+wx.showShareMenu({
+    withShareTicket: true,
+    menus: ['shareAppMessage', 'shareTimeline'],
+});
 Page({
-
-    /**
-     * 页面的初始数据
-     */
-    data: {
-
+    // 导航栏按钮控制
+    onBack() {
+        wx.navigateBack();
     },
-
-    /**
-     * 生命周期函数--监听页面加载
-     */
-    onLoad(options) {
-
+    onGoHome() {
+        wx.reLaunch({
+            url: '/pages/index/index',
+        });
     },
-
-    /**
-     * 生命周期函数--监听页面初次渲染完成
-     */
-    onReady() {
-
-    },
-
-    /**
-     * 生命周期函数--监听页面显示
-     */
-    onShow() {
-
-    },
-
-    /**
-     * 生命周期函数--监听页面隐藏
-     */
-    onHide() {
-
-    },
-
-    /**
-     * 生命周期函数--监听页面卸载
-     */
-    onUnload() {
-
-    },
-
-    /**
-     * 页面相关事件处理函数--监听用户下拉动作
-     */
-    onPullDownRefresh() {
-
-    },
-
-    /**
-     * 页面上拉触底事件的处理函数
-     */
-    onReachBottom() {
-
-    },
-
-    /**
-     * 用户点击右上角分享
-     */
+    // 自定义分享卡片
     onShareAppMessage() {
+        return {
+            title: 'NJFU图书馆座位预约',
+            path: '/pages/seat/index?seat=' + wx.getStorageSync('seat'),
+        }
+    },
+    onLoad: function (options) {
+        wx.removeStorageSync('seat');
+        wx.setStorageSync('seat', options.seat);
+    },
+    onReady() {
+        this.setData({
+            seat: wx.getStorageSync('seat'),
+        });
+        this.getSeatList("part");
+    },
+    data: {
+        showResvDetail: false,
+        showAllButton: false
+    },
+    showAll(){
+        this.getSeatList("all");
+        this.setData({
+            showAllButton: true
+        })
+    },
 
-    }
-})
+    getSeatList(num) {
+        wx.showLoading({
+            title: '加载中',
+            duration: 1200
+        })
+        const seat_name = wx.getStorageSync('seat');
+        wx.request({
+            url: 'https://libseat.littleking.site/wxapi/get_resv_list',
+            method: 'POST',
+            header: {
+                'content-type': 'application/json',
+                'Cookie': wx.getStorageSync('auth_cookie')
+            },
+            data: {
+                'type': 'seat',
+                'seat_name': seat_name,
+                'num': num
+            },
+            dataType: 'json',
+            success: (res) => {
+                if (res.data['results'] == 'success') {
+                    this.setData({
+                        studentList: res.data['data']
+                    });
+                } else {
+                    wx.showToast({
+                        title: '鉴权失败',
+                        icon: 'error',
+                        duration: 10000,
+                        mask: true
+                    })
+                }
+            },
+            fail: (res) => {
+                wx.showToast({
+                    title: '网络异常',
+                    icon: 'error',
+                    duration: 10000,
+                    mask: true
+                })
+            }
+        })
+    },
+    getDetail(res) {
+        wx.showLoading({
+            title: '加载中',
+            mask: true
+        });
+
+        var resvid = res.detail.currentTarget.dataset.custom;
+        var that = this;
+        wx.request({
+            url: "https://libseat.littleking.site/libseat/get_resvinfo/" + resvid,
+            method: "GET",
+            dataType: "json",
+            header: {
+                'content-type': 'application/json',
+                'Cookie': wx.getStorageSync('auth_cookie')
+            },
+            success: function (res) {
+                var data = JSON.parse(res.data);
+                console.log(data)
+                if (data.message == '查询成功') {
+                    var jsonData = data.data;
+                    that.setData({
+                        resvDetailList: jsonData,
+                        showResvDetail: true,
+                    });
+                    wx.hideLoading();
+                } else {
+                    wx.showToast({
+                        title: '请求失败',
+                        icon: 'error'
+                    });
+                }
+            },
+            fail: function () {
+                wx.showToast({
+                    title: '网络异常',
+                    icon: 'error'
+                });
+            }
+        });
+
+
+    },
+    closeResvDetail() {
+        this.setData({
+            showResvDetail: false,
+        })
+    },
+
+
+
+
+
+
+
+});
