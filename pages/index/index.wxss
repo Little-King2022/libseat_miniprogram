@@ -1,4 +1,10 @@
 /**index.wxss**/
+.popup {
+    color: #333;
+    align-items: center;
+    margin: 0 8% 8%;
+    height: 240px;
+}
 
 /* home */
 .input-title {
@@ -47,7 +53,7 @@
             0 5px 10px rgba(0, 0, 0, 5%),
             0 4px 5px rgba(0, 0, 0, 8%),
             0 2px 4px -1px rgba(0, 0, 0, 12%));
-    --td-message-content-font-color: red
+    --td-message-content-font-color: red;
 }
 
 
@@ -87,6 +93,7 @@
 .user-info button::after {
     border-style: none;
 }
+
 
 
 @import 'index-wxa-auto-dark.wxss'

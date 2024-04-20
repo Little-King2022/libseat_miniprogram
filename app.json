@@ -17,5 +17,6 @@
         "t-icon": "tdesign-miniprogram/icon/icon",
         "t-navbar": "tdesign-miniprogram/navbar/navbar",
         "t-dialog": "tdesign-miniprogram/dialog/dialog"
-    }
+    },
+    "lazyCodeLoading": "requiredComponents"
 }

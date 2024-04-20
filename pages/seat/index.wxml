@@ -6,7 +6,8 @@
     </view>
 </t-navbar>
 <view class="page">
-    <text>\n</text>
+    <text>
+</text>
     <view style="text-align: center;margin: 20rpx auto;">您当前选择的座位：{{seat}}</view>
     <view hidden="{{showAllButton}}" style="margin: 20rpx 30rpx 50rpx;">
         <t-button bind:tap="showAll" theme="light" size="large" block>仅展示近30条记录 点击全部显示</t-button>
@@ -27,7 +28,8 @@
                         <block wx:for="{{resvDetailList}}" wx:key="index">
                             <view class="table-row">
                                 <view class="table-cell">{{item.devName}}</view>
-                                <view class="table-cell">{{item.logonName + '\n' + item.trueName}}</view>
+                                <view class="table-cell">{{item.logonName + '
+' + item.trueName}}</view>
                                 <view class="table-cell">{{utils.timestampToTime(item.createTime)}}</view>
                                 <view class="table-cell">{{utils.optionType(item.kind)}}</view>
                                 <view class="table-cell">{{utils.optionDev(item.consoleKind)}}</view>
@@ -49,7 +51,8 @@
             <!-- 使用wx:for循环遍历数据并渲染到表格中 -->
             <block wx:for="{{studentList}}" wx:key="index">
                 <view class="table-row">
-                    <view class="table-cell"><text>{{item.stu_id}}\n{{item.stu_name}}</text></view>
+                    <view class="table-cell"><text>{{item.stu_id}}
+{{item.stu_name}}</text></view>
                     <view class="table-cell">{{item.dev_name}}</view>
                     <view class="table-cell">{{item.creat_time}}</view>
                     <view class="table-cell">

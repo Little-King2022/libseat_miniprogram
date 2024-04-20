@@ -4,7 +4,6 @@
         "t-divider": "tdesign-miniprogram/divider/divider",
         "t-button": "tdesign-miniprogram/button/button",
         "t-message": "tdesign-miniprogram/message/message",
-        "navigation-bar": "/components/navigation-bar/navigation-bar",
         "t-tab-bar": "tdesign-miniprogram/tab-bar/tab-bar",
         "t-tab-bar-item": "tdesign-miniprogram/tab-bar-item/tab-bar-item",
         "t-fab": "tdesign-miniprogram/fab/fab",
@@ -17,7 +16,8 @@
         "t-cell": "tdesign-miniprogram/cell/cell",
         "t-cell-group": "tdesign-miniprogram/cell-group/cell-group",
         "t-avatar": "tdesign-miniprogram/avatar/avatar",
-        "t-badge": "tdesign-miniprogram/badge/badge"
+        "t-badge": "tdesign-miniprogram/badge/badge",
+        "t-popup": "tdesign-miniprogram/popup/popup"
     },
     "component": false
 }

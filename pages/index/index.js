@@ -14,20 +14,22 @@ Page({
         }
     },
     onReady() {
-        // 标题栏高度设置
-        // const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 44;
-        // this.setData({
-        //     navigationBarHeight: navigationBarHeight,
-        // });
+        setTimeout(() => {
+            this.getLibNum();
+            this.getResvNum();
 
-        this.getLibNum();
-        this.getResvNum();
-
-        // 每分钟执行一次
+        }, 500);
         setInterval(() => {
             this.getLibNum();
             this.getResvNum();
         }, 20000);
+        
+    },
+    onShow(){
+        this.setData({
+            isLogin: wx.getStorageSync('isLogin')
+        });
+
     },
 
     data: {
@@ -53,6 +55,8 @@ Page({
         freeCount: 0,
         inLibCount: 0,
         remainCount: 0,
+        isPopupHidden: false
+
     },
     methods: {
 
@@ -60,7 +64,7 @@ Page({
 
     showRequestSubscribeMessage() {
         // 计算偏移量
-        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 110 +'rpx';
+        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 110 + 'rpx';
         Message.info({
             context: this,
             offset: [navigationBarHeight, 20],
@@ -90,16 +94,20 @@ Page({
             });
         }
         if (e.detail.value == 'resv') {
-            // 延迟1秒执行
-            setTimeout(() => {
-                this.showRequestSubscribeMessage();
-            }, 1000);
-            this.setData({
-                isHomeHidden: true,
-                isResvHidden: false,
-                isMyHidden: true,
-                currentPage: 'resv',
-            });
+            if (wx.getStorageSync('isLogin') == "true") {
+                // 延迟1秒执行
+                setTimeout(() => {
+                    this.showRequestSubscribeMessage();
+                }, 1000);
+                this.setData({
+                    isHomeHidden: true,
+                    isResvHidden: false,
+                    isMyHidden: true,
+                    currentPage: 'resv',
+                });
+            } else {
+                this.needLogin();
+            }
         }
         if (e.detail.value == 'my') {
             this.setData({
@@ -109,6 +117,48 @@ Page({
                 currentPage: 'my',
             });
         }
+    },
+    needLogin() {
+        this.setData({
+            isPopupHidden: true
+        })
+    },
+    jumpToLogin() {
+        this.setData({
+            isPopupHidden: false,
+            isHomeHidden: true,
+            isResvHidden: true,
+            isMyHidden: false,
+            currentPage: 'my',
+        });
+    },
+    login() {
+        wx.setStorageSync('isLogin', "true");
+        wx.showToast({
+            title: '测试登录成功',
+            duration: 1000
+        });
+        this.setData({
+            isLogin: true
+        });
+    },
+    logout() {
+        wx.setStorageSync('isLogin', "false");
+        wx.showToast({
+            title: '测试注销成功',
+            duration: 1000
+        });
+        this.setData({
+            isLogin: false
+        });
+        
+    },
+
+
+    onPopupVisibleChange(e) {
+        this.setData({
+            isPopupHidden: e.detail.visible,
+        });
     },
 
     showHelpInfo() {
@@ -122,61 +172,74 @@ Page({
         });
     },
     getLibNum() {
-        wx.request({
-            url: 'https://libseat.littleking.site/libseat/get_inlibnum',
-            method: 'GET',
-            header: {
-                'Cookie': wx.getStorageSync('auth_cookie')
-            },
-            success: (res) => {
-                res = JSON.parse(res.data);
-                var current_count = res.current_count;
-                var remain_count = res.remaining_count;
-                this.setData({
-                    inLibPercentage: (current_count / remain_count * 100).toFixed(0),
-                    inLibCount: current_count,
-                    remainCount: remain_count,
-                });
-            }
-        })
-    },
-    getResvNum() {
-        wx.request({
-            url: 'https://libseat.littleking.site/libseat/get_all_resv',
-            method: 'GET',
-            header: {
-                'Cookie': wx.getStorageSync('auth_cookie')
-            },
-            contentType: "application/json",
-            success: (res) => {
-                if (res['data']['result'] == 'success') {
-                    this.setData({
-                        'resvCount': res['data']['resvnum'],
-                        'freeCount': res['data']['freenum'],
-                        'resvPercentage': (100 - res['data']['freerate']).toFixed(0)
-                    })
-                }
-            }
-
-        })
-        for (let i = 2; i <= 6; i++) {
+        if (wx.getStorageSync('isAuth') == "true") {
             wx.request({
-                url: 'https://libseat.littleking.site/libseat/get_room_resv/' + i,
+                url: 'https://libseat.littleking.site/libseat/get_inlibnum',
                 method: 'GET',
-                contentType: 'application/json',
                 header: {
                     'Cookie': wx.getStorageSync('auth_cookie')
                 },
                 success: (res) => {
-                    if (res['data']['result'] == 'success') {
+                    try {
+                        res = JSON.parse(res.data);
+                        var current_count = res.current_count;
+                        var remain_count = res.remaining_count;
                         this.setData({
-                            ['_' + i + 'fnum']: res['data']['freenum'],
-                            ['_' + i + 'fPer']: parseInt(100 - res['data']['freerate']),
+                            inLibPercentage: (current_count / remain_count * 100).toFixed(0),
+                            inLibCount: current_count,
+                            remainCount: remain_count,
                         });
+                    } catch {
+                        wx.showToast({
+                            title: '请求失败',
+                            icon: 'error',
+                            duration: 2000,
+                            mask: true
+                        })
                     }
                 }
             })
-        }
+        };
+    },
+    getResvNum() {
+        if (wx.getStorageSync('isAuth') == "true") {
+            wx.request({
+                url: 'https://libseat.littleking.site/libseat/get_all_resv',
+                method: 'GET',
+                header: {
+                    'Cookie': wx.getStorageSync('auth_cookie')
+                },
+                contentType: "application/json",
+                success: (res) => {
+                    if (res['data']['result'] == 'success') {
+                        this.setData({
+                            'resvCount': res['data']['resvnum'],
+                            'freeCount': res['data']['freenum'],
+                            'resvPercentage': (100 - res['data']['freerate']).toFixed(0)
+                        })
+                    }
+                }
+
+            })
+            for (let i = 2; i <= 6; i++) {
+                wx.request({
+                    url: 'https://libseat.littleking.site/libseat/get_room_resv/' + i,
+                    method: 'GET',
+                    contentType: 'application/json',
+                    header: {
+                        'Cookie': wx.getStorageSync('auth_cookie')
+                    },
+                    success: (res) => {
+                        if (res['data']['result'] == 'success') {
+                            this.setData({
+                                ['_' + i + 'fnum']: res['data']['freenum'],
+                                ['_' + i + 'fPer']: parseInt(100 - res['data']['freerate']),
+                            });
+                        }
+                    }
+                })
+            }
+        };
     },
 
     // 座位查询输入框
@@ -209,21 +272,6 @@ Page({
             }
         })
     },
-
-    bindSeatSelect(e) {
-        var seat = e.target.dataset.item;
-        wx.navigateTo({
-            url: '/pages/seat/index?seat=' + seat,
-        })
-    },
-    bindStuSelect(e) {
-        var stu_id = (e.target.dataset.item).match(/.*\d+/g);
-        wx.navigateTo({
-            url: '/pages/stu/index?stu_id=' + stu_id,
-        })
-    },
-
-
     // 预约查询输入框
     bindResvInput(e) {
         if (e.detail.value == '') {
@@ -255,6 +303,33 @@ Page({
         })
     },
 
+    bindSeatSelect(e) {
+        if (wx.getStorageSync('isLogin') == "true") {
+            var seat = e.target.dataset.item;
+            wx.navigateTo({
+                url: '/pages/seat/index?seat=' + seat,
+            })
+        } else {
+            this.needLogin();
+        }
+
+    },
+    bindStuSelect(e) {
+        if (wx.getStorageSync('isLogin') == "true") {
+
+            var stu_id = (e.target.dataset.item).match(/.*\d+/g);
+            wx.navigateTo({
+                url: '/pages/stu/index?stu_id=' + stu_id,
+            })
+        } else {
+            this.needLogin();
+        }
+    },
+
+
+
+
+
 
 
     // my页面
@@ -266,6 +341,6 @@ Page({
         console.log('after');
     },
 
-    
+
 
 })
