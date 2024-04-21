@@ -17,7 +17,9 @@
         "t-cell-group": "tdesign-miniprogram/cell-group/cell-group",
         "t-avatar": "tdesign-miniprogram/avatar/avatar",
         "t-badge": "tdesign-miniprogram/badge/badge",
-        "t-popup": "tdesign-miniprogram/popup/popup"
+        "t-popup": "tdesign-miniprogram/popup/popup",
+        "t-tabs": "tdesign-miniprogram/tabs/tabs",
+        "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel"
     },
     "component": false
 }

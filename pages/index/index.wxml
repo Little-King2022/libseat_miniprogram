@@ -73,7 +73,7 @@
         <view class="popup" style="text-align: left;">
             <view style="font-size: 36rpx;margin-bottom: 20rpx;"><text decode="{{true}}">
 
-Hi👋 此功能需要登录
+Hi👋 此功能需要<text class="highlight-text">登录</text>
 </text></view>
             <view><t-button bind:tap="jumpToLogin" theme="light" size="large" style="font-size: 40rpx;" block icon="gesture-click">点此登录</t-button></view>
         </view>
@@ -172,78 +172,12 @@ Hi👋 此功能需要登录
                 </t-grid-item>
             </t-grid>
         </view>
-        <text decode="{{true}}">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</text>
+        
+        <!-- <text>\n\n\n\n\n\n\n</text> -->
     </view>
     <!-- 预约View -->
     <view id="resv" hidden="{{isResvHidden}}" style="height: 100%;">
-        <text decode="{{true}}">
-开发中，请先使用网页版。</text>
-        <text decode="{{true}}">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</text>
-        <text decode="{{true}}">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</text>
-        
+        <text decode="{{true}}">开发中，请先使用网页版。</text>
     </view>
     <!-- 我的View -->
     <view id="my" hidden="{{isMyHidden}}">
@@ -252,26 +186,54 @@ Hi👋 此功能需要登录
                 <t-avatar class="avatar-example" shape="round" icon="user" size="100px" link="{{avatarUrl}}" />
             </button>
             <view style="padding: 10rpx 0 40rpx;font-size: 36rpx;">
-                <t-badge count="未登录" shape="bubble" ariaRole="button">
+                <t-badge wx:if="{{isLogin === 'false'}}" count="未登录" shape="bubble" ariaRole="button">
+                    <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
+                </t-badge>
+                <t-badge wx:if="{{isLogin === 'true'}}" count="已登录" shape="bubble" ariaRole="button">
+                    <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
+                </t-badge>
+                <t-badge wx:if="{{isVIP === 'true'}}" count="已激活VIP" shape="bubble" ariaRole="button">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
             </view>
+        </view>
+        <view class="login-box">
+            <!-- 未登录 -->
+            <view wx:if="{{isLogin === 'false'}}">
+                <view style="padding: 10rpx 40rpx 0;font-size: 32rpx;">请选择<text class="highlight-text">登录方式</text>：</view>
+                <t-tabs defaultValue="{{0}}" bind:click="onLoginTabsClick" t-class="custom-tabs">
+                    <t-tab-panel label="已绑定手机号" value="0"/>
+                    <t-tab-panel label="图书馆账号" value="1"/>
+                </t-tabs>
+                <view hidden="{{loginType1}}">
+                    <!-- 登录方式一 -->
+                    <view style="margin: 0 40rpx;">
+                        <t-input maxcharacter="12" style="border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:35rpx;margin: 10rpx 0 20rpx;" prefixIcon="user" label="学号" placeholder="请输入已绑定的学号" suffixIcon="{{checkLoginIdStatus}}" bind:blur="checkLoginId" tips="{{checkLoginIdTips}}" value="{{stu_id}}" clearable/>
+                        <t-input maxcharacter="12" style="border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:35rpx;margin: 20rpx 0 10rpx;" prefixIcon="mobile" label="手机" placeholder="请输入已绑定的手机号码"  suffixIcon="{{checkLoginPhoneStatus}}" bind:blur="checkLoginPhone" tips="{{checkLoginPhoneTips}}" value="{{stu_phone}}" clearable/>
+                    </view>
+                </view>
+                <view hidden="{{loginType2}}">
+                    <!-- 登录方式二 -->
+                    <view style="margin: 0 40rpx;">
+                        <t-input maxcharacter="12" style="border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:35rpx;margin: 10rpx 0 20rpx;" prefixIcon="user" label="学号" placeholder="请输入学号" suffixIcon="{{checkLoginIdStatus}}" bind:blur="checkLoginId" tips="{{checkLoginIdTips}}" value="{{stu_id}}" clearable/>
+                        <t-input maxcharacter="30" style="border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:35rpx;margin: 20rpx 0 10rpx;" prefixIcon="lock-on" label="密码" placeholder="请输入密码" suffixIcon="{{checkLoginPwdStatus}}" bind:blur="checkLoginPwd" tips="{{checkLoginPwdTips}}" value="{{stu_pwd}}" clearable/>
+                    </view>
+                </view>
+                <view style="margin: 20rpx 20%;">
+                    <t-button bind:tap="login" theme="light" size="large" style="font-size: 46rpx;" block>登 录</t-button>
+                </view>
+                
+            </view>
 
-            <!-- 已登录 -->
-            <view wx:if="{{isLogin==true}}">
-                <text>{{isLogin}}</text>
+            <!-- 已登陆 -->
+            <view wx:if="{{isLogin === 'true'}}" style="margin: 20rpx 20%;">
                 <t-button bind:tap="logout" theme="danger" size="large" style="font-size: 40rpx;" block icon="gesture-click">注销登录</t-button>
             </view>
-
-            <!-- 未登陆 -->
-            <view wx:else>
-                <t-button bind:tap="login" theme="light" size="large" style="font-size: 40rpx;" block icon="gesture-click">登录测试按钮</t-button>
-            </view>
             
-            
+        </view>   
             
 
-        </view>
+        
         <text>
 
 

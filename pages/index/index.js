@@ -23,13 +23,11 @@ Page({
             this.getLibNum();
             this.getResvNum();
         }, 20000);
-        
-    },
-    onShow(){
+        console.log(wx.getStorageSync('isLogin'));
         this.setData({
-            isLogin: wx.getStorageSync('isLogin')
+            isLogin: wx.getStorageSync('isLogin'),
+            nickName: wx.getStorageSync('login_stu_id'),
         });
-
     },
 
     data: {
@@ -55,8 +53,13 @@ Page({
         freeCount: 0,
         inLibCount: 0,
         remainCount: 0,
-        isPopupHidden: false
-
+        isPopupHidden: false,
+        loginType1: false,
+        loginType2: true,
+        stu_id: "",
+        stu_phone: "",
+        stu_pwd: "",
+        checkLoginPwdTips: "默认密码为njfu+身份证后6位+!",
     },
     methods: {
 
@@ -96,9 +99,9 @@ Page({
         if (e.detail.value == 'resv') {
             if (wx.getStorageSync('isLogin') == "true") {
                 // 延迟1秒执行
-                setTimeout(() => {
-                    this.showRequestSubscribeMessage();
-                }, 1000);
+                // setTimeout(() => {
+                //     this.showRequestSubscribeMessage();
+                // }, 1000);
                 this.setData({
                     isHomeHidden: true,
                     isResvHidden: false,
@@ -115,6 +118,7 @@ Page({
                 isResvHidden: true,
                 isMyHidden: false,
                 currentPage: 'my',
+
             });
         }
     },
@@ -132,26 +136,291 @@ Page({
             currentPage: 'my',
         });
     },
-    login() {
-        wx.setStorageSync('isLogin', "true");
-        wx.showToast({
-            title: '测试登录成功',
-            duration: 1000
-        });
+
+    // 登录区
+    onLoginTabsClick(e) {
         this.setData({
-            isLogin: true
+            checkLoginIdTips: "",
+            checkLoginPhoneTips: "",
+            checkLoginIdStatus: "",
+            checkLoginPhoneStatus: "",
+            checkLoginPwdStatus: ""
+        })
+        if (e.detail.value == "0") {
+            this.setData({
+                loginType1: false,
+                loginType2: true,
+            })
+        } else {
+            this.setData({
+                loginType2: false,
+                loginType1: true,
+            })
+        };
+    },
+    checkLoginId(e) {
+        var stu_id = e.detail.value;
+        if (stu_id.length <= 12 && stu_id.length >= 9) {
+            if (this.data.loginType1) {
+                this.setData({
+                    checkLoginIdStatus: "check-circle",
+                    stu_id: stu_id,
+                });
+            } else {
+                wx.request({
+                    url: 'https://libseat.littleking.site/wxapi/check_login_id',
+                    method: 'POST',
+                    header: {
+                        'content-type': 'application/json',
+                        'Cookie': wx.getStorageSync('auth_cookie')
+                    },
+                    data: {
+                        'stu_id': stu_id,
+                    },
+                    dataType: 'json',
+                    success: (res) => {
+                        if (res.data['result'] == 'success') {
+                            this.setData({
+                                checkLoginIdStatus: "check-circle",
+                                checkLoginIdTips: "验证成功，绑定的手机尾号为：" + res.data['data'],
+                                stu_id: stu_id,
+                            });
+                        } else {
+                            this.setData({
+                                checkLoginIdStatus: "error-circle",
+                                checkLoginIdTips: "此账户未绑定过手机号，请使用右侧登录方式",
+                                stu_id: stu_id,
+                            });
+                        }
+                    },
+                    fail: (res) => {
+                        wx.showToast({
+                            title: '网络异常',
+                            icon: 'error',
+                            duration: 10000,
+                            mask: true
+                        })
+                    }
+                })
+            }
+        } else {
+            this.setData({
+                checkLoginIdStatus: "error-circle",
+                checkLoginIdTips: "学号格式错误",
+            })
+        }
+    },
+    checkLoginPhone(e) {
+        var stu_phone = e.detail.value;
+        if (/^[1][3,4,5,6,7,8,9][0-9]{9}$/.test(stu_phone)) {
+            this.setData({
+                checkLoginPhoneStatus: "check-circle",
+                checkLoginPhoneTips: "",
+                stu_phone: stu_phone,
+            })
+        } else {
+            this.setData({
+                checkLoginPhoneStatus: "error-circle",
+                checkLoginPhoneTips: "手机号格式错误",
+            })
+        }
+    },
+    checkLoginPwd(e) {
+        var stu_pwd = e.detail.value;
+        if (stu_pwd == "") {
+            this.setData({
+                checkLoginPwdStatus: "error-circle",
+                checkLoginPwdTips: "请输入密码，默认密码为njfu+身份证后6位+!",
+            })
+        } else {
+            this.setData({
+                checkLoginPwdStatus: "check-circle",
+                stu_pwd: stu_pwd
+            })
+        }
+    },
+    getLoginCode(callback) {
+        wx.login({
+            success(res) {
+                if (res.code) {
+                    callback(res.code); // 调用回调函数，将 code 作为参数传递
+                } else {
+                    wx.showToast({
+                        title: '请稍后重试',
+                        icon: 'error',
+                        duration: 1000
+                    });
+                    callback(false); // 调用回调函数，传递 false 表示失败
+                }
+            }
+        });
+    },
+    login() {
+        wx.showLoading({
+            title: '请稍后',
+        });
+        this.getLoginCode((wxcode) => { // 调用 getLoginCode，并传入一个回调函数
+            if (this.data.loginType2 && !this.data.loginType1) {
+                var stu_id = this.data.stu_id;
+                var stu_phone = this.data.stu_phone;
+                if ((stu_id.length <= 12 && stu_id.length >= 9) && (stu_phone.length == 11) && wxcode) {
+                    wx.request({
+                        url: 'https://libseat.littleking.site/wxapi/wxmplogin',
+                        method: 'POST',
+                        header: {
+                            'content-type': 'application/json',
+                            'Cookie': wx.getStorageSync('auth_cookie')
+                        },
+                        data: {
+                            'login_type': "phone",
+                            'wxcode': wxcode,
+                            'stu_id': stu_id,
+                            'stu_phone': stu_phone
+                        },
+                        dataType: 'json',
+                        success: (res) => {
+                            if (res.data['result'] == 'success') {
+                                this.setData({
+                                    isLogin: "true",
+                                    nickName: res.data['stu_id']
+                                });
+                                wx.setStorageSync('isLogin', "true");
+                                wx.setStorageSync('login_stu_id', stu_id);
+                                wx.showToast({
+                                    title: '登录成功',
+                                    duration: 1000,
+                                    icon: 'success'
+                                });
+                            } else {
+                                wx.showToast({
+                                    title: '登录失败',
+                                    duration: 1000,
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        fail: (res) => {
+                            wx.showToast({
+                                title: '网络异常',
+                                icon: 'error',
+                                duration: 10000,
+                                mask: true
+                            })
+                        }
+                    })
+                } else {
+                    wx.showToast({
+                        title: '请稍后重试',
+                        icon: 'error',
+                        duration: 1000
+                    });
+                    this.setData({
+                        stu_id: "",
+                        stu_phone: "",
+                        stu_pwd: "",
+                        checkLoginIdTips: "",
+                        checkLoginPhoneTips: "",
+                        checkLoginIdStatus: "",
+                        checkLoginPhoneStatus: "",
+                        checkLoginPwdStatus: ""
+                    })
+                }
+            } else if (this.data.loginType1 && !this.data.loginType2) {
+                var stu_id = this.data.stu_id;
+                var stu_pwd = this.data.stu_pwd;
+                if ((stu_id.length <= 12 && stu_id.length >= 9) && (stu_pwd.length > 0) && wxcode) {
+                    wx.request({
+                        url: 'https://libseat.littleking.site/wxapi/wxmplogin',
+                        method: 'POST',
+                        header: {
+                            'content-type': 'application/json',
+                            'Cookie': wx.getStorageSync('auth_cookie')
+                        },
+                        data: {
+                            'login_type': "pwd",
+                            'wxcode': wxcode,
+                            'stu_id': stu_id,
+                            'stu_pwd': stu_pwd
+                        },
+                        dataType: 'json',
+                        success: (res) => {
+                            if (res.data['result'] == 'success') {
+                                this.setData({
+                                    isLogin: "true",
+                                    nickName: res.data['stu_id']
+                                });
+                                wx.setStorageSync('isLogin', "true");
+                                wx.setStorageSync('login_stu_id', res.data['stu_id']);
+                                wx.showToast({
+                                    title: '登录成功',
+                                    duration: 1000,
+                                    icon: 'success'
+                                });
+                            } else {
+                                wx.showToast({
+                                    title: '登录失败',
+                                    duration: 1000,
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        fail: (res) => {
+                            wx.showToast({
+                                title: '网络异常',
+                                icon: 'error',
+                                duration: 10000,
+                                mask: true
+                            })
+                        }
+                    })
+
+                } else {
+                    wx.showToast({
+                        title: '请稍后重试',
+                        icon: 'error',
+                        duration: 1000
+                    });
+                    this.setData({
+                        stu_id: "",
+                        stu_phone: "",
+                        stu_pwd: "",
+                        checkLoginIdTips: "",
+                        checkLoginPhoneTips: "",
+                        checkLoginIdStatus: "",
+                        checkLoginPhoneStatus: "",
+                        checkLoginPwdStatus: ""
+                    })
+                }
+            } else {
+                wx.showToast({
+                    title: '请稍后重试',
+                    icon: 'error',
+                    duration: 1000
+                });
+                this.setData({
+                    stu_id: "",
+                    stu_phone: "",
+                    stu_pwd: "",
+                    checkLoginIdTips: "",
+                    checkLoginPhoneTips: "",
+                    checkLoginIdStatus: "",
+                    checkLoginPhoneStatus: "",
+                    checkLoginPwdStatus: ""
+                })
+            }
         });
     },
     logout() {
         wx.setStorageSync('isLogin', "false");
+        wx.removeStorageSync('stu_id');
+        this.setData({
+            isLogin: "false",
+            nickName: ""
+        });
         wx.showToast({
-            title: '测试注销成功',
+            title: '注销成功',
             duration: 1000
         });
-        this.setData({
-            isLogin: false
-        });
-        
     },
 
 
@@ -333,13 +602,14 @@ Page({
 
 
     // my页面
-    onChooseAvatar(e) {
-        console.log(e.detail);
-        this.setData({
-            avatarUrl: e.detail,
-        });
-        console.log('after');
-    },
+    // onChooseAvatar(e) {
+    //     var tmp_avatar_url = e.detail
+    //     // 上传临时头像文件到服务器，并获取真实的头像url地址
+
+    //     this.setData({
+    //         avatarUrl: avatar_url,
+    //     });
+    // },
 
 
 

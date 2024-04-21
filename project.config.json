@@ -19,8 +19,8 @@
             "disablePlugins": [],
             "outputPath": ""
         },
-        "minifyWXML": false,
-        "minifyWXSS": false
+        "minifyWXML": true,
+        "minifyWXSS": true
     },
     "condition": {},
     "editorSetting": {

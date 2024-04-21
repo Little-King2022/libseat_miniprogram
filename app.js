@@ -46,8 +46,8 @@ App({
 
         
         // 登录初始化
-        if (wx.getStorageSync('isLogin') == null) {
-            console.log("未登陆")
+        if (wx.getStorageSync('isLogin') == '') {
+            console.log("无登陆状态")
             wx.removeStorageSync('login_cookie');
             wx.setStorageSync('isLogin', 'false');
         }

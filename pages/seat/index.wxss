@@ -1,5 +1,13 @@
 /* pages/seat/index.wxss */
 
+.title {
+    color: rgba(0, 0, 0, 0.9);
+    font-size: 42rpx;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
 .container {
     padding: 0;
     text-align: center;

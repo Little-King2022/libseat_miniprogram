@@ -1,15 +1,46 @@
 <!--pages/seat/index.wxml-->
-<t-navbar title="座位查询" class="navbar">
+<t-navbar title="座位查询 {{seat}}" class="navbar">
     <view slot="capsule" class="custom-capsule">
         <t-icon size="20" bind:tap="onBack" aria-role="button" aria-label="返回" name="chevron-left" class="custom-capsule__icon" />
         <t-icon size="20" bind:tap="onGoHome" aria-role="button" aria-label="首页" name="home" class="custom-capsule__icon" />
     </view>
 </t-navbar>
 <view class="page">
-    <text>
-</text>
-    <view style="text-align: center;margin: 20rpx auto;">您当前选择的座位：{{seat}}</view>
-    <view hidden="{{showAllButton}}" style="margin: 20rpx 30rpx 50rpx;">
+    <!-- <text>
+    </text>
+    <view style="text-align: center;margin: 20rpx auto;">您当前选择的座位：{{seat}}</view> -->
+    <view class="title" style="margin: 40rpx 0 10rpx;">
+        <text>远程签到/手动签到</text>
+    </view>
+    <view style="margin: 5rpx 30rpx 50rpx;">
+        <t-button bind:tap="remoteSign" theme="light" size="large" block>点击此处复制签到链接</t-button>
+    </view>
+
+    <view hidden="{{showNowResv}}">
+        <view class="title" style="margin: 0 0 13rpx;">
+            <text>当前使用记录</text>
+        </view>
+        <scroll-view scroll-x>
+            <view style="width: 100%;">
+                <view class="table-row">
+                    <view class="table-cell header">学号</view>
+                    <view class="table-cell header">姓名</view>
+                    <view class="table-cell header">开始时间</view>
+                    <view class="table-cell header">结束时间</view>
+                </view>
+                <view class="table-row">
+                    <view class="table-cell">{{stuId}}</view>
+                    <view class="table-cell">{{stuName}}</view>
+                    <view class="table-cell">{{resvBeginTime}}</view>
+                    <view class="table-cell">{{resvEndTime}}</view>
+                </view>
+            </view>
+        </scroll-view>
+    </view>
+    <view class="title" style="margin: 40rpx 0 10rpx;">
+        <text>历史使用记录</text>
+    </view>
+    <view hidden="{{showAllButton}}" style="margin: 10rpx 30rpx 30rpx;">
         <t-button bind:tap="showAll" theme="light" size="large" block>仅展示近30条记录 点击全部显示</t-button>
     </view>
     <view>
@@ -52,7 +83,7 @@
             <block wx:for="{{studentList}}" wx:key="index">
                 <view class="table-row">
                     <view class="table-cell"><text>{{item.stu_id}}
-{{item.stu_name}}</text></view>
+                            {{item.stu_name}}</text></view>
                     <view class="table-cell">{{item.dev_name}}</view>
                     <view class="table-cell">{{item.creat_time}}</view>
                     <view class="table-cell">
