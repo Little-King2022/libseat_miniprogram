@@ -77,7 +77,7 @@
 
 
 .long-content {
-    height: 790rpx;
+    height: 700rpx;
     margin-top: 20rpx;
     font-size: 32rpx;
     color: rgba(0, 0, 0, 0.733);
@@ -112,6 +112,61 @@
     border-style: none;
 }
 
+.my-resv-list-container{
+    width: 96%;
+    text-align: center;
+    margin: 0 auto;
+}
+.table {
+    width: 860rpx;
+    border-collapse: collapse;
+}
+.detail-table {
+    width: 140%;
+    border-collapse: collapse;
+}
+
+.table-row {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+
+.header {
+    font-weight: bolder;
+    font-size: 32rpx !important;
+}
+
+.table-cell {
+    font-size: 28rpx;
+    flex: 1;
+    padding: 5px;
+    text-align: center;
+    /* 水平居中 */
+    align-items: center;
+    /* 垂直居中 */
+    display: flex;
+    /* 使用 Flex 布局 */
+    justify-content: center;
+    /* 水平居中 */
+    width: min-content;
+}
+
+/* 奇数行背景色 */
+.table-row:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+.detail-table {
+    width: 110%;
+    border-collapse: collapse;
+}
+.detail-content {
+    height: 500rpx;
+    margin-top: 20rpx;
+    font-size: 32rpx;
+    color: rgba(0, 0, 0, 0.733);
+    width: 100%;
+}
 
 
 /* @import 'index-wxa-auto-dark.wxss' */

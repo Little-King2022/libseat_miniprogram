@@ -25,12 +25,58 @@ App({
                     wx.setStorageSync('auth_cookie', res.header['Set-Cookie']);
                     wx.setStorageSync('isAuth', 'true');
                     wx.hideLoading();
+                    if (wx.getStorageSync('isLogin') == '' || wx.getStorageSync('isLogin') == 'false') {
+                        wx.setStorageSync('isLogin', 'false');
+                    }
+                    else if (wx.getStorageSync('isLogin') == 'true' && wx.getStorageSync('token').length == 22 && wx.getStorageSync('login_stu_id').length >= 9) {
+                        wx.request({
+                            url: 'https://libseat.littleking.site/wxapi/wxmplogin',
+                            method: 'POST',
+                            header: {
+                                'content-type': 'application/json',
+                                'Cookie': wx.getStorageSync('auth_cookie')
+                            },
+                            data: {
+                                'login_type': "token",
+                                'stu_id': wx.getStorageSync('login_stu_id'),
+                                'token': wx.getStorageSync('token')
+                            },
+                            dataType: 'json',
+                            success: (res) => {
+                                if (res.data['result'] == 'success' && (res.data['token']).length == 22) {
+                                    wx.setStorageSync('isLogin', "true");
+                                    wx.setStorageSync('login_stu_id', res.data['stu_id']);
+                                    wx.setStorageSync('token', res.data['token']);
+                                } else {
+                                    wx.setStorageSync('isLogin', 'false');
+                                    wx.showToast({
+                                        title: '登录状态失效',
+                                        duration: 3000,
+                                        icon: 'error'
+                                    });
+                                }
+                            },
+                            fail: (res) => {
+                                wx.showToast({
+                                    title: '网络异常',
+                                    icon: 'error',
+                                    duration: 3000,
+                                })
+                            }
+                        })
+                    } else {
+                        wx.setStorageSync('isLogin', 'false');
+                        wx.showToast({
+                            title: '登录状态失效',
+                            duration: 3000,
+                            icon: 'error'
+                        });
+                    };
                 } else {
                     wx.showToast({
                         title: '鉴权失败',
                         icon: 'error',
-                        duration: 10000,
-                        mask: true
+                        duration: 3000,
                     })
                 }
             },
@@ -38,19 +84,13 @@ App({
                 wx.showToast({
                     title: '网络异常',
                     icon: 'error',
-                    duration: 10000,
-                    mask: true
+                    duration: 3000,
                 })
             }
         });
 
-        
-        // 登录初始化
-        if (wx.getStorageSync('isLogin') == '') {
-            console.log("无登陆状态")
-            wx.removeStorageSync('login_cookie');
-            wx.setStorageSync('isLogin', 'false');
-        }
+
+
 
 
         // 分享权限控制
@@ -59,6 +99,6 @@ App({
             menus: ['shareAppMessage', 'shareTimeline'],
         });
 
-        
+
     },
 })

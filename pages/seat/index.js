@@ -62,7 +62,16 @@ Page({
                             });
                         }
                     })
-                } else {
+                }
+                else if (res.data['result'] == 'not login.'){
+                    wx.showToast({
+                        title: '请先登录',
+                        icon: 'error',
+                        duration: 10000,
+                        mask: true
+                    })
+                }
+                 else {
                     wx.showToast({
                         title: '请求失败',
                         icon: 'error',
@@ -105,6 +114,14 @@ Page({
                         showNowResv: false
                     })
                 } 
+                if (res.data['result'] == 'not login.'){
+                    wx.showToast({
+                        title: '请先登录',
+                        icon: 'error',
+                        duration: 10000,
+                        mask: true
+                    })
+                }
             },
         })
     },
@@ -137,7 +154,7 @@ Page({
             },
             dataType: 'json',
             success: (res) => {
-                if (res.data['results'] == 'success') {
+                if (res.data['result'] == 'success') {
                     this.setData({
                         studentList: res.data['data']
                     });

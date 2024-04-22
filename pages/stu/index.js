@@ -62,7 +62,7 @@ Page({
             },
             dataType: 'json',
             success: (res) => {
-                if (res.data['results'] == 'success') {
+                if (res.data['result'] == 'success') {
                     this.setData({
                         studentList: res.data['data']
                     });

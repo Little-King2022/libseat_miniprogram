@@ -23,11 +23,11 @@ Page({
             this.getLibNum();
             this.getResvNum();
         }, 20000);
-        console.log(wx.getStorageSync('isLogin'));
         this.setData({
             isLogin: wx.getStorageSync('isLogin'),
             nickName: wx.getStorageSync('login_stu_id'),
         });
+        this.getMyResvList();
     },
 
     data: {
@@ -60,6 +60,7 @@ Page({
         stu_phone: "",
         stu_pwd: "",
         checkLoginPwdTips: "默认密码为njfu+身份证后6位+!",
+        showMyResvList: true,
     },
     methods: {
 
@@ -118,7 +119,6 @@ Page({
                 isResvHidden: true,
                 isMyHidden: false,
                 currentPage: 'my',
-
             });
         }
     },
@@ -260,6 +260,8 @@ Page({
             title: '请稍后',
         });
         this.getLoginCode((wxcode) => { // 调用 getLoginCode，并传入一个回调函数
+
+            // 手机号登录
             if (this.data.loginType2 && !this.data.loginType1) {
                 var stu_id = this.data.stu_id;
                 var stu_phone = this.data.stu_phone;
@@ -279,13 +281,14 @@ Page({
                         },
                         dataType: 'json',
                         success: (res) => {
-                            if (res.data['result'] == 'success') {
+                            if (res.data['result'] == 'success' && (res.data['token']).length == 22) {
                                 this.setData({
                                     isLogin: "true",
                                     nickName: res.data['stu_id']
                                 });
                                 wx.setStorageSync('isLogin', "true");
                                 wx.setStorageSync('login_stu_id', stu_id);
+                                wx.setStorageSync('token', res.data['token']);
                                 wx.showToast({
                                     title: '登录成功',
                                     duration: 1000,
@@ -325,7 +328,9 @@ Page({
                         checkLoginPwdStatus: ""
                     })
                 }
-            } else if (this.data.loginType1 && !this.data.loginType2) {
+            }
+            // 密码登录
+            else if (this.data.loginType1 && !this.data.loginType2) {
                 var stu_id = this.data.stu_id;
                 var stu_pwd = this.data.stu_pwd;
                 if ((stu_id.length <= 12 && stu_id.length >= 9) && (stu_pwd.length > 0) && wxcode) {
@@ -344,13 +349,15 @@ Page({
                         },
                         dataType: 'json',
                         success: (res) => {
-                            if (res.data['result'] == 'success') {
+                            if (res.data['result'] == 'success' && (res.data['token']).length == 22) {
                                 this.setData({
                                     isLogin: "true",
                                     nickName: res.data['stu_id']
                                 });
                                 wx.setStorageSync('isLogin', "true");
                                 wx.setStorageSync('login_stu_id', res.data['stu_id']);
+                                wx.setStorageSync('token', res.data['token']);
+
                                 wx.showToast({
                                     title: '登录成功',
                                     duration: 1000,
@@ -397,31 +404,117 @@ Page({
                     icon: 'error',
                     duration: 1000
                 });
-                this.setData({
-                    stu_id: "",
-                    stu_phone: "",
-                    stu_pwd: "",
-                    checkLoginIdTips: "",
-                    checkLoginPhoneTips: "",
-                    checkLoginIdStatus: "",
-                    checkLoginPhoneStatus: "",
-                    checkLoginPwdStatus: ""
-                })
             }
         });
+        this.getMyResvList();
     },
     logout() {
         wx.setStorageSync('isLogin', "false");
         wx.removeStorageSync('stu_id');
         this.setData({
             isLogin: "false",
-            nickName: ""
+            nickName: "",
+            showMyResvList: true
         });
         wx.showToast({
             title: '注销成功',
             duration: 1000
         });
     },
+
+    // 查询我的预约记录
+    getMyResvList() {
+        if (this.data.isLogin == "true") {
+            this.setData({
+                showMyResvList: true
+            });
+            wx.showLoading({
+                title: '加载中',
+            });
+            wx.request({
+                url: 'https://libseat.littleking.site/wxapi/get_my_resv_list',
+                method: 'GET',
+                header: {
+                    'Cookie': wx.getStorageSync('auth_cookie')
+                },
+                dataType: 'json',
+                success: (res) => {
+                    if (res.data['result'] == 'success') {
+                        this.setData({
+                            myResvList: res.data['data'],
+                            showMyResvList: false
+                        });
+                        wx.hideLoading();
+                    } else if (res.data['result'] == 'zero') {
+                        wx.showToast({
+                            title: '没有预约记录',
+                            icon: 'error',
+                            duration: 2000,
+                        })
+                    } else {
+                        wx.showToast({
+                            title: '请求失败',
+                            icon: 'error',
+                            duration: 1000,
+                        })
+                    }
+                },
+                fail: (res) => {
+                    wx.showToast({
+                        title: '网络异常',
+                        icon: 'error',
+                        duration: 3000,
+                    })
+                }
+            })
+        }
+    },
+    getDetail(res) {
+        wx.showLoading({
+            title: '加载中',
+            mask: true
+        });
+
+        var resvid = res.detail.currentTarget.dataset.custom;
+        var that = this;
+        wx.request({
+            url: "https://libseat.littleking.site/libseat/get_resvinfo/" + resvid,
+            method: "GET",
+            dataType: "json",
+            header: {
+                'content-type': 'application/json',
+                'Cookie': wx.getStorageSync('auth_cookie')
+            },
+            success: function (res) {
+                var data = JSON.parse(res.data);
+                if (data.message == '查询成功') {
+                    var jsonData = data.data;
+                    that.setData({
+                        resvDetailList: jsonData,
+                        showResvDetail: true,
+                    });
+                    wx.hideLoading();
+                } else {
+                    wx.showToast({
+                        title: '请求失败',
+                        icon: 'error'
+                    });
+                }
+            },
+            fail: function () {
+                wx.showToast({
+                    title: '网络异常',
+                    icon: 'error'
+                });
+            }
+        });
+    },
+    closeResvDetail() {
+        this.setData({
+            showResvDetail: false,
+        })
+    },
+
 
 
     onPopupVisibleChange(e) {
@@ -513,7 +606,7 @@ Page({
 
     // 座位查询输入框
     bindSeatInput(e) {
-        if (e.detail.value == '') {
+        if (e.detail.value == '' || e.detail.value == ' ') {
             this.setData({
                 isSeatPickerHidden: true,
             })
@@ -543,7 +636,7 @@ Page({
     },
     // 预约查询输入框
     bindResvInput(e) {
-        if (e.detail.value == '') {
+        if (e.detail.value == '' || e.detail.value == ' ') {
             this.setData({
                 isStuPickerHidden: true,
             })
