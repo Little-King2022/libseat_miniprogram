@@ -1,8 +1,12 @@
 <!-- index.wxml -->
-<!-- <page-meta>
-    <navigation-bar title="约个座位" back="{{false}}" color="white" background="#1e9fff"></navigation-bar>
-</page-meta> -->
-<t-navbar title="约个座位" class="navbar"></t-navbar>
+
+<t-navbar title="约个座位" class="navbar">
+    <view wx:if="{{haveNotifi}}" slot="capsule" class="custom-capsule" bind:tap="fetchNotifications">
+        <t-badge dot offset="{{ [1, -1] }}" class="wrapper">
+            <t-icon size="20" aria-role="notification" aria-label="通知" name="notification" class="custom-capsule__icon" />
+        </t-badge>
+    </view>
+</t-navbar>
 
 <!-- 消息弹窗 -->
 <t-message id="t-message" class="home-message" />
@@ -19,42 +23,41 @@
                 <button open-type="contact" style="text-align: center;margin: 0 5% 32rpx;">🙋点击此处联系客服</button>
                 <scroll-view scroll-y class="long-content">
                     <view class="content-container">
-                        <view style="text-align: center;font-size: 55rpx;font-weight: bold;padding-top: 32rpx;">常见问题指南💁🏼</view>
+                        <view style="text-align: center;font-size: 55rpx;font-weight: bold;padding: 32rpx 0 20rpx;">常见问题指南💁🏼</view>
                         <view style="margin: 0 4% 0;">
-                            <text decode="{{true}}" class="qatitle" user-select="true">
-                                1.网站是免费使用的吗？</text>
-                            <text decode="{{true}}" class="qacontent" space="ensp" user-select="true"><text class="atten">付费功能：自动预约、自动签到。</text>
-其他功能您可以免费使用，例如：远程签到、查询座位预约记录、查询读者预约记录等。
-您还可以点击上方按钮或长按扫描下方二维码，获取3天的使用次数。
-                            </text>
-                            <text decode="{{true}}" class="qatitle" user-select="true">2.每天的自动预约时间?</text>
-                            <text decode="{{true}}" class="qacontent" user-select="true">每天的7:00，系统将自动执行抢座任务，所预约的时间段为<text class="atten">下一天的</text>9:30-22:00 (每周五为20:00结束)。
-
-                            </text>
-                            <text decode="{{true}}" class="qatitle" user-select="true">3.每天的自动签到时间？</text>
-                            <text decode="{{true}}" class="qacontent" space="ensp" user-select="true">只要您激活了VIP，无论是否创建了抢座计划，系统都会在每天的7:30-20:00期间，<text class="atten">每30分钟</text>自动检测并为所有需要签到的用户进行签到哦。
-                            </text>
-                            <text decode="{{true}}" class="qatitle" user-select="true">4.如何进行远程签到 or 手动签到？</text>
-                            <text decode="{{true}}" class="qacontent" space="ensp" user-select="true">请您在网站首页的“座位查询”模块输入座位编号的后三位数字进行搜索，然后选中需要远程签到的座位号。
-请注意：使用此功能必须满足以下<text class="atten">三个条件</text>：
-1、连接上校园网或VPN；
-2、在微信客户端中打开；
-3、此微信已绑定过“南京林业大学图书馆”微信公众号的读者证。
-                            </text>
-                            <text decode="{{true}}" class="qatitle" user-select="true">5.如何查询某个座位的预约记录？</text>
-                            <text decode="{{true}}" class="qacontent" space="ensp" user-select="true">"请您在网站首页的“座位查询”模块输入座位编号的后三位数字进行搜索，然后点击“查询使用记录”。
-如果当前座位有用户正在使用，您也可以在下方的“当前使用人信息”模块看到当前用户的各项信息。"
-                            </text>
-                            <text decode="{{true}}" class="qatitle" user-select="true">6.如何查询某个读者的预约记录？</text>
-                            <text decode="{{true}}" class="qacontent" space="ensp" user-select="true">请您在网站首页的“预约查询”模块输入学号或者姓名进行搜索。支持按学号或姓名模糊匹配。
-                            </text>
-                            <text decode="{{true}}" class="qatitle" user-select="true">7.如何创建抢座计划？</text>
-                            <text decode="{{true}}" class="qacontent" space="ensp" user-select="true">请您在网站首页的“自动预约&签到”模块输入您的学号，登陆到管理后台进行操作。
-在管理后台页面，您可以进行创建、查询和删除抢座计划，查询历史预约记录等操作。
-
-                            </text>
+                            <view class="qatitle">1.网站是免费使用的吗？</view>
+                            <view class="qacontent" space="ensp"><text class="atten">付费功能：自动预约、自动签到。</text>
+                                <view>其他功能您可以免费使用，例如：远程签到、查询座位预约记录、查询读者预约记录等。</view>
+                                <view>您还可以点击上方按钮或长按扫描下方二维码，获取3天的使用次数。</view>
+                            </view>
+                            <view class="qatitle">2.每天的自动预约时间?</view>
+                            <view class="qacontent">每天的7:00，系统将自动执行抢座任务，所预约的时间段为<text class="atten">下一天的</text>9:30-22:00 (每周五为20:00结束)。</view>
+                            <view class="qatitle">3.每天的自动签到时间？</view>
+                            <view class="qacontent" space="ensp">只要您激活了VIP，无论是否创建了抢座计划，系统都会在每天的7:30-20:00期间，<text class="atten">每30分钟</text>自动检测并为所有需要签到的用户进行签到哦。</view>
+                            <view class="qatitle">4.如何进行远程 or 手动签到？</view>
+                            <view class="qacontent" space="ensp">
+                                <view>请您在网站首页的“座位查询”模块输入座位编号的后三位数字进行搜索，然后选中需要远程签到的座位号。</view>
+                                <view>请注意：使用此功能必须满足以下<text class="atten">三个条件</text>：</view>
+                                <view>1、连接上校园网或VPN；</view>
+                                <view>2、在微信客户端中打开；</view>
+                                <view>3、此微信已绑定过“南京林业大学图书馆”微信公众号的读者证。</view>
+                            </view>
+                            <view class="qatitle">5.如何查询某个座位的预约记录？</view>
+                            <view class="qacontent" space="ensp">
+                                <view>"请您在网站首页的“座位查询”模块输入座位编号的后三位数字进行搜索，然后点击“查询使用记录”。</view>
+                                <view>如果当前座位有用户正在使用，您也可以在下方的“当前使用人信息”模块看到当前用户的各项信息。"</view>
+                            </view>
+                            <view class="qatitle">6.如何查询某个读者的预约记录？</view>
+                            <view class="qacontent" space="ensp">请您在网站首页的“预约查询”模块输入学号或者姓名进行搜索。支持按学号或姓名模糊匹配。</view>
+                            <view class="qatitle">7.如何创建抢座计划？</view>
+                            <view class="qacontent" space="ensp">
+                                <view>请您在网站首页的“自动预约&签到”模块输入您的学号，登陆到管理后台进行操作。</view>
+                                <view>在管理后台页面，您可以进行创建、查询和删除抢座计划，查询历史预约记录等操作。</view>
+                            </view>
+                            <view class="qacontent"></view>
+                            <view class="qacontent"></view>
                             <view style="text-align: center;margin: 0 auto;width: 100%;">
-                                <image style="width: 100%;zoom: 75%;" lazy-load="true" show-menu-by-longpress="true" src="https://libseat.littleking.site/static/qr_code_20240225libseat.jpg" mode="aspectFit" />
+                                <image style="width: 100%;zoom: 70%;" lazy-load="true" show-menu-by-longpress="true" src="https://libseat.littleking.site/static/qr_code_20240225libseat.jpg" mode="aspectFit" />
                             </view>
                         </view>
                     </view>
@@ -83,7 +86,7 @@
             <t-input bind:change="bindSeatInput" confirm-type="search" placeholder="请输入后三位数字" borderless="true" clearable style="{{home_input_style}}" align="left" label="座位编号:" />
         </view>
         <view class="home-picker" style="width: 70%; text-align: center; margin: 0 auto;" hidden="{{isSeatPickerHidden}}">
-            <t-cell-group theme="card" bordered="true">
+            <t-cell-group theme="card" bordered="true" >
                 <block wx:for="{{seatList}}" wx:key="index">
                     <t-cell title="{{item}}" hover note="选择" arrow bind:tap="bindSeatSelect" data-item="{{item}}" />
                 </block>
@@ -173,64 +176,93 @@
         <!-- <text>\n\n\n\n\n\n\n</text> -->
     </view>
     <!-- 预约View -->
-    <view id="resv" hidden="{{isResvHidden}}" style="height: 100%;">
-        <text decode="{{true}}">开发中，请先使用网页版。</text>
+    <view id="resv" hidden="{{isResvHidden}}" style="height: 100%; margin: 8% 10px 10px;">
+        <text user-select="{{true}}">1.创建抢座计划(只需创建一次，每天自动抢座)：</text>
+        <text user-select="{{true}}">https://libseat.littleking.site</text>
+        <view style="margin: 0 10%;">
+            <t-button bind:tap="webLink" theme="light" size="large" block>点击此处复制网页版链接</t-button>
+        </view>
+        
+        <text user-select="{{true}}">2.查询座位、预约信息、远程签到等功能：</text>
+        <text user-select="{{true}}">在此小程序内。</text>
     </view>
     <!-- 我的View -->
     <view id="my" hidden="{{isMyHidden}}">
-        <view class="user-info" style="text-align: center;margin: 0 auto;padding: 10% 0 0;">
+        <view class="user-info" style="text-align: center;margin: 0 auto;padding: 5% 0 0;">
             <button open-type="chooseAvatar" style="background-color: rgba(0, 0, 0, 0);width: 50%;" bind:chooseavatar="onChooseAvatar">
                 <t-avatar class="avatar-example" shape="round" icon="user" size="100px" link="{{avatarUrl}}" />
             </button>
             <view style="padding: 10rpx 0 40rpx;font-size: 36rpx;">
-                <t-badge wx:if="{{isLogin === 'false'}}" count="未登录" shape="bubble" ariaRole="button">
+                <t-badge wx:if="{{isLogin === 'false'}}" count="未登录" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
-                <t-badge wx:if="{{isLogin === 'true'}}" count="已登录" shape="bubble" ariaRole="button">
+                <t-badge wx:if="{{isLogin === 'true'}}" count="已登录" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
-                <t-badge wx:if="{{isVIP === 'true'}}" count="已激活VIP" shape="bubble" ariaRole="button">
+                <t-badge wx:if="{{isVIP === 'true'}}" count="已激活VIP" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
             </view>
+            <view wx:if="{{isLogin === 'true'}}">
+                <t-cell-group theme="card" bordered="{{true}}" style="--td-cell-height: 85rpx !important;">
+                    <t-cell title="我的信用分" note="{{credit}}" leftIcon="verify" hover />
+                    <t-cell title="绑定手机号" note="{{stuPhone}}" leftIcon="mobile" hover arrow />
+                    <t-cell title="选择通知方式" leftIcon="notification" hover arrow />
+                    <t-cell bind:click="showHelpInfo" title="常见问题指南" leftIcon="questionnaire" hover arrow />
+                    <t-cell bind:click="showComment" title="求好评🤗" leftIcon="thumb-up" hover arrow />
+                </t-cell-group>
+            </view>
         </view>
+
+        <!-- 登录框 -->
         <view class="login-box">
             <!-- 未登录 -->
             <view wx:if="{{isLogin === 'false'}}">
-                <view style="padding: 10rpx 40rpx 0;font-size: 32rpx;">请选择<text class="highlight-text">登录方式</text>：</view>
-                <t-tabs defaultValue="{{0}}" bind:click="onLoginTabsClick" t-class="custom-tabs">
-                    <t-tab-panel label="已绑定手机号" value="0" />
-                    <t-tab-panel label="图书馆账号" value="1" />
+                <view style="padding: 10rpx 40rpx 10rpx;font-size: 38rpx;">Hi👋 请选择<text class="highlight-text">登录方式</text>：</view>
+                <t-tabs defaultValue="{{0}}" bind:click="onLoginTabsClick" t-class="custom-tabs" style="padding: 0 0 30rpx;">
+                    <t-tab-panel label="微信一键登录" value="0" />
+                    <t-tab-panel label="已绑定手机号" value="1" />
+                    <t-tab-panel label="图书馆账号" value="2" />
                 </t-tabs>
+                <view hidden="{{loginType0}}">
+                    <!-- 登录方式0:微信一键登录 -->
+                    <view style="margin: 0 20% 5rpx;">
+                        <t-button bind:tap="login" theme="light" size="large" style="font-size: 46rpx;" block>微信一键登录</t-button>
+                    </view>
+                    <view style="margin: 10rpx 0;font-size: 28rpx;text-align: center;color:grey">若您是小程序<text class="highlight-text">新用户</text>，请先选择其他登录方式</view>
+                </view>
                 <view hidden="{{loginType1}}">
-                    <!-- 登录方式一 -->
+                    <!-- 登录方式1:手机号登录 -->
                     <view style="margin: 0 40rpx;">
                         <t-input maxcharacter="12" style="border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:35rpx;margin: 10rpx 0 20rpx;" prefixIcon="user" label="学号" placeholder="请输入已绑定的学号" suffixIcon="{{checkLoginIdStatus}}" bind:blur="checkLoginId" tips="{{checkLoginIdTips}}" value="{{stu_id}}" clearable />
                         <t-input maxcharacter="12" style="border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:35rpx;margin: 20rpx 0 10rpx;" prefixIcon="mobile" label="手机" placeholder="请输入已绑定的手机号码" suffixIcon="{{checkLoginPhoneStatus}}" bind:blur="checkLoginPhone" tips="{{checkLoginPhoneTips}}" value="{{stu_phone}}" clearable />
                     </view>
                 </view>
                 <view hidden="{{loginType2}}">
-                    <!-- 登录方式二 -->
+                    <!-- 登录方式2:密码登录 -->
                     <view style="margin: 0 40rpx;">
                         <t-input maxcharacter="12" style="border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:35rpx;margin: 10rpx 0 20rpx;" prefixIcon="user" label="学号" placeholder="请输入学号" suffixIcon="{{checkLoginIdStatus}}" bind:blur="checkLoginId" tips="{{checkLoginIdTips}}" value="{{stu_id}}" clearable />
                         <t-input maxcharacter="30" style="border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:35rpx;margin: 20rpx 0 10rpx;" prefixIcon="lock-on" label="密码" placeholder="请输入密码" suffixIcon="{{checkLoginPwdStatus}}" bind:blur="checkLoginPwd" tips="{{checkLoginPwdTips}}" value="{{stu_pwd}}" clearable />
                     </view>
                 </view>
-                <view style="margin: 20rpx 20%;">
+                <view hidden="{{loginType1 && loginType2}}" style="margin: 20rpx 0 0;font-size: 28rpx;text-align: center;color:grey">登录成功后，下次可使用<text class="highlight-text">微信一键登录</text></view>
+                <view hidden="{{loginType1 && loginType2}}" style="margin: 15rpx 20%;">
                     <t-button bind:tap="login" theme="light" size="large" style="font-size: 46rpx;" block>登 录</t-button>
                 </view>
 
             </view>
 
             <!-- 已登陆 -->
-            <view wx:if="{{isLogin === 'true'}}" style="margin: 20rpx 20%;">
+            <view wx:if="{{isLogin === 'true'}}" style="margin: 30rpx 20% 20rpx">
                 <t-button bind:tap="logout" theme="danger" size="large" style="font-size: 40rpx;" block icon="gesture-click">注销登录</t-button>
             </view>
 
         </view>
+
+        <!-- 我的预约列表 -->
         <view wx:if="{{isLogin === 'true'}}" class="my-resv-list">
             <view style="margin: 20rpx 20% 25rpx">
-                <t-button bind:tap="getMyResvList" theme="light" size="large" style="font-size: 40rpx;" block icon="file-search">刷新预约记录</t-button>
+                <t-button bind:tap="getMyResvList" theme="light" size="large" style="font-size: 40rpx;" block icon="file-search">历史预约记录</t-button>
             </view>
             <scroll-view hidden="{{showMyResvList}}" scroll-x scroll-y class="my-resv-list-container">
                 <view class="table">
@@ -249,7 +281,7 @@
                             <view class="table-cell" style="color: {{utils.resvStatusColor(item.resv_status)}};">{{utils.resvStatus(item.resv_status)}}</view>
                             <view class="table-cell">{{item.resv_begin_time}}</view>
                             <view class="table-cell">{{item.resv_end_time}}</view>
-                            <view class="table-cell">{{item.resv_check_time}}</view>  
+                            <view class="table-cell">{{item.resv_check_time}}</view>
                             <view class="table-cell">
                                 <t-button class="button" theme="light" variant="outline" custom-dataset="{{item.resv_id}}" bind:tap="getDetail">查看</t-button>
                             </view>
@@ -286,60 +318,19 @@
 
 
 
-        <text>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        </text>
-        <text>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        </text>
+        <text></text>
+        <text></text>
 
     </view>
-    <!-- 底部TabBar -->
-    <view>
-        <t-tab-bar class="index-tab-bar" value="{{currentPage}}" bindchange="changePages" shape="round" theme="tag" split="true">
-            <t-tab-bar-item value="home" icon="home" ariaLabel="首页">首页</t-tab-bar-item>
-            <t-tab-bar-item value="resv" icon="assignment-checked" ariaLabel="自动预约&签到">自动预约&签到</t-tab-bar-item>
-            <t-tab-bar-item value="my" icon="user" ariaLabel="我的">我的</t-tab-bar-item>
-        </t-tab-bar>
-    </view>
+
+</view>
+<!-- 底部TabBar -->
+<view>
+    <t-tab-bar class="index-tab-bar" value="{{currentPage}}" bindchange="changePages" shape="round" theme="tag" split="true">
+        <t-tab-bar-item value="home" icon="home" ariaLabel="首页">首页</t-tab-bar-item>
+        <t-tab-bar-item value="resv" icon="assignment-checked" ariaLabel="自动预约&签到">自动预约&签到</t-tab-bar-item>
+        <t-tab-bar-item value="my" icon="user" ariaLabel="我的">我的</t-tab-bar-item>
+    </t-tab-bar>
 </view>
 
 <wxs module="utils">

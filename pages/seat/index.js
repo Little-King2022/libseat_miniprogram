@@ -67,16 +67,16 @@ Page({
                     wx.showToast({
                         title: '请先登录',
                         icon: 'error',
-                        duration: 10000,
-                        mask: true
+                        duration: 3000,
+                        
                     })
                 }
                  else {
                     wx.showToast({
                         title: '请求失败',
                         icon: 'error',
-                        duration: 10000,
-                        mask: true
+                        duration: 3000,
+                        
                     })
                 }
             },
@@ -84,8 +84,8 @@ Page({
                 wx.showToast({
                     title: '网络异常',
                     icon: 'error',
-                    duration: 10000,
-                    mask: true
+                    duration: 3000,
+                    
                 })
             }
         })
@@ -118,8 +118,8 @@ Page({
                     wx.showToast({
                         title: '请先登录',
                         icon: 'error',
-                        duration: 10000,
-                        mask: true
+                        duration: 3000,
+                        
                     })
                 }
             },
@@ -162,8 +162,8 @@ Page({
                     wx.showToast({
                         title: '鉴权失败',
                         icon: 'error',
-                        duration: 10000,
-                        mask: true
+                        duration: 3000,
+                        
                     })
                 }
             },
@@ -171,8 +171,8 @@ Page({
                 wx.showToast({
                     title: '网络异常',
                     icon: 'error',
-                    duration: 10000,
-                    mask: true
+                    duration: 3000,
+                    
                 })
             }
         })
@@ -180,7 +180,7 @@ Page({
     getDetail(res) {
         wx.showLoading({
             title: '加载中',
-            mask: true
+            
         });
 
         var resvid = res.detail.currentTarget.dataset.custom;

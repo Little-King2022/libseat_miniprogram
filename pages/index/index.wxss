@@ -56,7 +56,6 @@
     --td-cell-border-right-space: 10px;
     --td-cell-note-font-size: 28rpx;
     --td-cell-title-color: rgba(27, 27, 27, 0.747) !important;
-
 }
 
 /* home下方宫格 */
@@ -66,6 +65,7 @@
 }
 
 .page {
+    padding-bottom: 200rpx;
     /* message样式 */
     --td-message-box-shadow: var(--td-shadow-1,
             0 5px 10px rgba(0, 0, 0, 5%),
@@ -96,6 +96,8 @@
     text-align: left;
     font-size: 28rpx;
     color: rgb(112, 112, 112);
+    padding: 10rpx 30rpx;
+    padding-left: 10rpx;
 }
 
 .home-message {
@@ -118,7 +120,7 @@
     margin: 0 auto;
 }
 .table {
-    width: 860rpx;
+    width: 125%;
     border-collapse: collapse;
 }
 .detail-table {
@@ -167,6 +169,8 @@
     color: rgba(0, 0, 0, 0.733);
     width: 100%;
 }
-
+.index-tab-bar{
+    margin-bottom: 8rpx;
+}
 
 /* @import 'index-wxa-auto-dark.wxss' */

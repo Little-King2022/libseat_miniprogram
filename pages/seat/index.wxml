@@ -6,9 +6,6 @@
     </view>
 </t-navbar>
 <view class="page">
-    <!-- <text>
-    </text>
-    <view style="text-align: center;margin: 20rpx auto;">您当前选择的座位：{{seat}}</view> -->
     <view class="title" style="margin: 40rpx 0 10rpx;">
         <text>远程签到/手动签到</text>
     </view>

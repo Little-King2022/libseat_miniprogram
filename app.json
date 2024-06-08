@@ -3,7 +3,8 @@
         "pages/index/index",
         "pages/requestSubscribe/index",
         "pages/seat/index",
-        "pages/stu/index"
+        "pages/stu/index",
+        "pages/showNotifi/index"
     ],
     "window": {
         "navigationBarTextStyle": "black",
@@ -18,5 +19,11 @@
         "t-navbar": "tdesign-miniprogram/navbar/navbar",
         "t-dialog": "tdesign-miniprogram/dialog/dialog"
     },
-    "lazyCodeLoading": "requiredComponents"
+    "lazyCodeLoading": "requiredComponents",
+    "plugins": {
+        "wxacommentplugin": {
+            "version": "latest",
+            "provider": "wx82e6ae1175f264fa"
+        }
+    }
 }

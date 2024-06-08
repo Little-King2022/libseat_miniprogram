@@ -15,19 +15,46 @@ Page({
     },
     onReady() {
         setTimeout(() => {
-            this.getLibNum();
-            this.getResvNum();
+            if (wx.getStorageSync('isAuth') == 'true') {
+                this.getLibNum();
+                this.getResvNum();
+                if (wx.getStorageSync('isLogin') == 'true') {
+                    this.getMyInfo();
+                }
+            } else {
+                setTimeout(() => {
+                    if (wx.getStorageSync('isAuth') == 'true') {
+                        this.getLibNum();
+                        this.getResvNum();
+                        if (wx.getStorageSync('isLogin') == 'true') {
+                            this.getMyInfo();
+                        }
+                    }
+                }, 2000);
+            }
+            this.setData({
+                isLogin: wx.getStorageSync('isLogin'),
+                nickName: wx.getStorageSync('login_stu_id'),
+            });
+        }, 800);
 
-        }, 500);
+        setTimeout(() => {
+            this.fetchNotifications();
+        }, 1000);
+
         setInterval(() => {
-            this.getLibNum();
-            this.getResvNum();
+            if (wx.getStorageSync('isAuth') == 'true') {
+                this.getLibNum();
+                this.getResvNum();
+            } else {
+                wx.showToast({
+                    title: '请重启小程序',
+                    icon: 'error',
+                    duration: '5000'
+                })
+            }
         }, 20000);
-        this.setData({
-            isLogin: wx.getStorageSync('isLogin'),
-            nickName: wx.getStorageSync('login_stu_id'),
-        });
-        this.getMyResvList();
+
     },
 
     data: {
@@ -54,13 +81,15 @@ Page({
         inLibCount: 0,
         remainCount: 0,
         isPopupHidden: false,
-        loginType1: false,
+        loginType0: false,
+        loginType1: true,
         loginType2: true,
         stu_id: "",
         stu_phone: "",
         stu_pwd: "",
         checkLoginPwdTips: "默认密码为njfu+身份证后6位+!",
         showMyResvList: true,
+        haveNotifi: false
     },
     methods: {
 
@@ -88,6 +117,71 @@ Page({
             },
         });
     },
+    // 服务器拉取通知
+    fetchNotifications() {
+        const that = this;
+        wx.request({
+            url: 'https://libseat.littleking.site/wxapi/get_notifi',
+            method: 'GET',
+            success(res) {
+                if (res.statusCode === 200) {
+                    const count = res.data['count']
+                    if (count > 0) {
+                        const notifications = res.data['notifications'];
+                        for(var i = 0; i<count; i++){
+                            const id = notifications[i]['id'];
+                            if (wx.getStorageSync(id)){
+                                continue;
+                            }
+                            else{
+                                that.setData({
+                                    haveNotifi: true
+                                });
+                                wx.setStorageSync('notifications', notifications[i]);
+                                that.showMessage(notifications[i]['title']);
+                                break;
+                            }
+                        }
+                    }
+                }
+            },
+            fail(err) {
+                console.error('Failed to fetch notifications:', err);
+            }
+        });
+    },
+    showMessage(content) {
+        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 110 + 'rpx' ;
+        Message.info({
+            context: this,
+            offset: [navigationBarHeight, 20],
+            icon: 'notification-filled',
+            content: content,
+            marquee: {
+                speed: 70,
+                loop: -1,
+                delay: 0
+            },
+            duration: 30000,
+            link: {
+                content: '查看通知',
+                navigatorProps: {
+                    url: '/pages/showNotifi/index',
+                },
+            },
+        });
+    },
+    // 跳转到详细通知页面
+    navigateToNotifiDetail(notification) {
+        wx.navigateTo({
+            url: '/pages/showNotifi/index',
+            success: function (res) {
+                res.eventChannel.emit('sendData', {
+                    content: notification.content
+                });
+            }
+        });
+    },
     changePages(e) {
         if (e.detail.value == 'home') {
             this.setData({
@@ -99,10 +193,6 @@ Page({
         }
         if (e.detail.value == 'resv') {
             if (wx.getStorageSync('isLogin') == "true") {
-                // 延迟1秒执行
-                // setTimeout(() => {
-                //     this.showRequestSubscribeMessage();
-                // }, 1000);
                 this.setData({
                     isHomeHidden: true,
                     isResvHidden: false,
@@ -120,6 +210,9 @@ Page({
                 isMyHidden: false,
                 currentPage: 'my',
             });
+            if (this.data.isLogin == "true") {
+                this.getMyResvList();
+            }
         }
     },
     needLogin() {
@@ -148,13 +241,22 @@ Page({
         })
         if (e.detail.value == "0") {
             this.setData({
+                loginType0: false,
+                loginType1: true,
+                loginType2: true,
+            })
+        } else if (e.detail.value == "1") {
+            this.setData({
+                loginType0: true,
                 loginType1: false,
                 loginType2: true,
             })
+
         } else {
             this.setData({
-                loginType2: false,
+                loginType0: true,
                 loginType1: true,
+                loginType2: false,
             })
         };
     },
@@ -197,8 +299,7 @@ Page({
                         wx.showToast({
                             title: '网络异常',
                             icon: 'error',
-                            duration: 10000,
-                            mask: true
+                            duration: 3000
                         })
                     }
                 })
@@ -259,10 +360,63 @@ Page({
         wx.showLoading({
             title: '请稍后',
         });
+        if (wx.getStorageSync('auth_cookie') == '') {
+            wx.showToast({
+                title: '请重启小程序',
+                duration: 3000,
+                icon: 'error'
+            });
+            return false;
+        }
         this.getLoginCode((wxcode) => { // 调用 getLoginCode，并传入一个回调函数
+            // 微信一键登录
+            if (!this.data.loginType0 && this.data.loginType1 && this.data.loginType2) {
+                wx.request({
+                    url: 'https://libseat.littleking.site/wxapi/wxmplogin',
+                    method: 'POST',
+                    header: {
+                        'content-type': 'application/json',
+                        'Cookie': wx.getStorageSync('auth_cookie')
+                    },
+                    data: {
+                        'login_type': "wx",
+                        'wxcode': wxcode,
+                    },
+                    dataType: 'json',
+                    success: (res) => {
+                        if (res.data['result'] == 'success' && (res.data['token']).length == 22) {
+                            this.setData({
+                                isLogin: "true",
+                                nickName: res.data['stu_id']
+                            });
+                            wx.setStorageSync('isLogin', "true");
+                            wx.setStorageSync('login_stu_id', res.data['stu_id']);
+                            wx.setStorageSync('token', res.data['token']);
+                            wx.showToast({
+                                title: '登录成功',
+                                duration: 1000,
+                                icon: 'success'
+                            });
+                        } else {
+                            wx.showToast({
+                                title: '登录失败',
+                                duration: 3000,
+                                icon: 'error'
+                            });
+                        }
+                    },
+                    fail: (res) => {
+                        wx.showToast({
+                            title: '网络异常',
+                            icon: 'error',
+                            duration: 3000
+                        })
+                    }
+                })
 
+            }
             // 手机号登录
-            if (this.data.loginType2 && !this.data.loginType1) {
+            else if (this.data.loginType0 && !this.data.loginType1 && this.data.loginType2) {
                 var stu_id = this.data.stu_id;
                 var stu_phone = this.data.stu_phone;
                 if ((stu_id.length <= 12 && stu_id.length >= 9) && (stu_phone.length == 11) && wxcode) {
@@ -287,7 +441,7 @@ Page({
                                     nickName: res.data['stu_id']
                                 });
                                 wx.setStorageSync('isLogin', "true");
-                                wx.setStorageSync('login_stu_id', stu_id);
+                                wx.setStorageSync('login_stu_id', res.data['stu_id']);
                                 wx.setStorageSync('token', res.data['token']);
                                 wx.showToast({
                                     title: '登录成功',
@@ -297,7 +451,7 @@ Page({
                             } else {
                                 wx.showToast({
                                     title: '登录失败',
-                                    duration: 1000,
+                                    duration: 3000,
                                     icon: 'error'
                                 });
                             }
@@ -306,16 +460,15 @@ Page({
                             wx.showToast({
                                 title: '网络异常',
                                 icon: 'error',
-                                duration: 10000,
-                                mask: true
+                                duration: 3000
                             })
                         }
                     })
                 } else {
                     wx.showToast({
-                        title: '请稍后重试',
+                        title: '数据校验失败',
                         icon: 'error',
-                        duration: 1000
+                        duration: 3000
                     });
                     this.setData({
                         stu_id: "",
@@ -330,7 +483,7 @@ Page({
                 }
             }
             // 密码登录
-            else if (this.data.loginType1 && !this.data.loginType2) {
+            else if (this.data.loginType0 && this.data.loginType1 && !this.data.loginType2) {
                 var stu_id = this.data.stu_id;
                 var stu_pwd = this.data.stu_pwd;
                 if ((stu_id.length <= 12 && stu_id.length >= 9) && (stu_pwd.length > 0) && wxcode) {
@@ -357,7 +510,6 @@ Page({
                                 wx.setStorageSync('isLogin', "true");
                                 wx.setStorageSync('login_stu_id', res.data['stu_id']);
                                 wx.setStorageSync('token', res.data['token']);
-
                                 wx.showToast({
                                     title: '登录成功',
                                     duration: 1000,
@@ -366,7 +518,7 @@ Page({
                             } else {
                                 wx.showToast({
                                     title: '登录失败',
-                                    duration: 1000,
+                                    duration: 3000,
                                     icon: 'error'
                                 });
                             }
@@ -375,17 +527,15 @@ Page({
                             wx.showToast({
                                 title: '网络异常',
                                 icon: 'error',
-                                duration: 10000,
-                                mask: true
+                                duration: 3000
                             })
                         }
                     })
-
                 } else {
                     wx.showToast({
-                        title: '请稍后重试',
+                        title: '数据校验失败',
                         icon: 'error',
-                        duration: 1000
+                        duration: 3000
                     });
                     this.setData({
                         stu_id: "",
@@ -400,17 +550,26 @@ Page({
                 }
             } else {
                 wx.showToast({
-                    title: '请稍后重试',
+                    title: '请重启小程序',
                     icon: 'error',
-                    duration: 1000
+                    duration: 3000
                 });
             }
+            setTimeout(() => {
+                this.getMyResvList();
+            }, 1500)
+            setTimeout(() => {
+                this.getMyInfo();
+            }, 1200)
         });
-        this.getMyResvList();
+
+
+
     },
     logout() {
         wx.setStorageSync('isLogin', "false");
-        wx.removeStorageSync('stu_id');
+        wx.removeStorageSync('login_stu_id');
+        wx.removeStorageSync('token');
         this.setData({
             isLogin: "false",
             nickName: "",
@@ -422,98 +581,7 @@ Page({
         });
     },
 
-    // 查询我的预约记录
-    getMyResvList() {
-        if (this.data.isLogin == "true") {
-            this.setData({
-                showMyResvList: true
-            });
-            wx.showLoading({
-                title: '加载中',
-            });
-            wx.request({
-                url: 'https://libseat.littleking.site/wxapi/get_my_resv_list',
-                method: 'GET',
-                header: {
-                    'Cookie': wx.getStorageSync('auth_cookie')
-                },
-                dataType: 'json',
-                success: (res) => {
-                    if (res.data['result'] == 'success') {
-                        this.setData({
-                            myResvList: res.data['data'],
-                            showMyResvList: false
-                        });
-                        wx.hideLoading();
-                    } else if (res.data['result'] == 'zero') {
-                        wx.showToast({
-                            title: '没有预约记录',
-                            icon: 'error',
-                            duration: 2000,
-                        })
-                    } else {
-                        wx.showToast({
-                            title: '请求失败',
-                            icon: 'error',
-                            duration: 1000,
-                        })
-                    }
-                },
-                fail: (res) => {
-                    wx.showToast({
-                        title: '网络异常',
-                        icon: 'error',
-                        duration: 3000,
-                    })
-                }
-            })
-        }
-    },
-    getDetail(res) {
-        wx.showLoading({
-            title: '加载中',
-            mask: true
-        });
 
-        var resvid = res.detail.currentTarget.dataset.custom;
-        var that = this;
-        wx.request({
-            url: "https://libseat.littleking.site/libseat/get_resvinfo/" + resvid,
-            method: "GET",
-            dataType: "json",
-            header: {
-                'content-type': 'application/json',
-                'Cookie': wx.getStorageSync('auth_cookie')
-            },
-            success: function (res) {
-                var data = JSON.parse(res.data);
-                if (data.message == '查询成功') {
-                    var jsonData = data.data;
-                    that.setData({
-                        resvDetailList: jsonData,
-                        showResvDetail: true,
-                    });
-                    wx.hideLoading();
-                } else {
-                    wx.showToast({
-                        title: '请求失败',
-                        icon: 'error'
-                    });
-                }
-            },
-            fail: function () {
-                wx.showToast({
-                    title: '网络异常',
-                    icon: 'error'
-                });
-            }
-        });
-    },
-    closeResvDetail() {
-        this.setData({
-            showResvDetail: false,
-        })
-    },
 
 
 
@@ -555,8 +623,7 @@ Page({
                         wx.showToast({
                             title: '请求失败',
                             icon: 'error',
-                            duration: 2000,
-                            mask: true
+                            duration: 3000
                         })
                     }
                 }
@@ -695,15 +762,160 @@ Page({
 
 
     // my页面
-    // onChooseAvatar(e) {
-    //     var tmp_avatar_url = e.detail
-    //     // 上传临时头像文件到服务器，并获取真实的头像url地址
+    // 查询我的预约记录
+    getMyResvList() {
+        if (this.data.isLogin == "true") {
+            this.setData({
+                showMyResvList: true
+            });
+            wx.showLoading({
+                title: '加载中',
+            });
+            wx.request({
+                url: 'https://libseat.littleking.site/wxapi/get_my_resv_list',
+                method: 'GET',
+                header: {
+                    'Cookie': wx.getStorageSync('auth_cookie')
+                },
+                dataType: 'json',
+                success: (res) => {
+                    if (res.data['result'] == 'success') {
+                        this.setData({
+                            myResvList: res.data['data'],
+                            showMyResvList: false
+                        });
+                        wx.hideLoading();
+                    } else if (res.data['result'] == 'zero') {
+                        wx.showToast({
+                            title: '没有预约记录',
+                            icon: 'error',
+                            duration: 2000,
+                        })
+                    } else {
+                        wx.showToast({
+                            title: '请求失败',
+                            icon: 'error',
+                            duration: 1000,
+                        })
+                    }
+                },
+                fail: (res) => {
+                    wx.showToast({
+                        title: '网络异常',
+                        icon: 'error',
+                        duration: 3000,
+                    })
+                }
+            })
+        }
+    },
+    // 显示详细记录
+    getDetail(res) {
+        wx.showLoading({
+            title: '加载中',
+            mask: true
+        });
 
-    //     this.setData({
-    //         avatarUrl: avatar_url,
-    //     });
-    // },
-
-
-
+        var resvid = res.detail.currentTarget.dataset.custom;
+        var that = this;
+        wx.request({
+            url: "https://libseat.littleking.site/libseat/get_resvinfo/" + resvid,
+            method: "GET",
+            dataType: "json",
+            header: {
+                'content-type': 'application/json',
+                'Cookie': wx.getStorageSync('auth_cookie')
+            },
+            success: function (res) {
+                var data = JSON.parse(res.data);
+                if (data.message == '查询成功') {
+                    var jsonData = data.data;
+                    that.setData({
+                        resvDetailList: jsonData,
+                        showResvDetail: true,
+                    });
+                    wx.hideLoading();
+                } else {
+                    wx.showToast({
+                        title: '请求失败',
+                        icon: 'error'
+                    });
+                }
+            },
+            fail: function () {
+                wx.showToast({
+                    title: '网络异常',
+                    icon: 'error'
+                });
+            }
+        });
+    },
+    // 关闭详细记录对话框
+    closeResvDetail() {
+        this.setData({
+            showResvDetail: false,
+        })
+    },
+    // 转到小程序评论
+    showComment() {
+        var plugin = requirePlugin("wxacommentplugin");
+        plugin.openComment({
+            success: (res) => {
+                wx.showModal({
+                    title: '评价成功',
+                    content: '每30天可评价一次，感谢您的评价',
+                })
+            },
+            fail: (res) => {
+                wx.showToast({
+                    title: '评价失败',
+                    icon: 'error',
+                    duration: 3000
+                })
+            }
+        })
+    },
+    // 请求个人信息
+    getMyInfo() {
+        wx.request({
+            url: 'https://libseat.littleking.site/wxapi/get_user_info',
+            method: 'GET',
+            header: {
+                'Cookie': wx.getStorageSync('auth_cookie')
+            },
+            dataType: 'json',
+            success: (res) => {
+                if (res.data['result'] == 'success') {
+                    this.setData({
+                        stuPhone: res.data['stu_phone'],
+                        credit: res.data['credit'] + '/600 分'
+                    });
+                } else {
+                    wx.showToast({
+                        title: '请求失败',
+                        duration: 3000,
+                        icon: 'error'
+                    });
+                }
+            },
+            fail: (res) => {
+                wx.showToast({
+                    title: '网络异常',
+                    icon: 'error',
+                    duration: 3000
+                })
+            }
+        })
+    },
+    // 复制网页版链接
+    webLink() {
+        wx.setClipboardData({
+            data: "https://libseat.littleking.site/",
+            success: (res) => {
+                wx.showToast({
+                    title: '链接复制成功',
+                })
+            }
+        })
+    },
 })

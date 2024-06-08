@@ -29,4 +29,4 @@
     background: #e7e7e7;
 }
 
-@import './app-wxa-auto-dark.wxss'
+/* @import './app-wxa-auto-dark.wxss' */
