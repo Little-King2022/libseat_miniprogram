@@ -19,7 +19,9 @@
         "t-badge": "tdesign-miniprogram/badge/badge",
         "t-popup": "tdesign-miniprogram/popup/popup",
         "t-tabs": "tdesign-miniprogram/tabs/tabs",
-        "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel"
+        "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel",
+        "t-collapse": "tdesign-miniprogram/collapse/collapse",
+        "t-collapse-panel": "tdesign-miniprogram/collapse-panel/collapse-panel"
     },
     "component": false
 }

@@ -1,29 +1,30 @@
 <!--pages/requestSubscribe/index.wxml-->
 <t-navbar title="订阅通知" class="navbar">
     <view slot="capsule" class="custom-capsule">
-    <t-icon
-      size="20"
-      bind:tap="onBack"
-      aria-role="button"
-      aria-label="返回"
-      name="chevron-left"
-      class="custom-capsule__icon"
-    />
-    <t-icon
-      size="20"
-      bind:tap="onGoHome"
-      aria-role="button"
-      aria-label="首页"
-      name="home"
-      class="custom-capsule__icon"
-    />
-  </view>
+        <t-icon size="20" bind:tap="onBack" aria-role="button" aria-label="返回" name="chevron-left" class="custom-capsule__icon" />
+        <t-icon size="20" bind:tap="onGoHome" aria-role="button" aria-label="首页" name="home" class="custom-capsule__icon" />
+    </view>
 </t-navbar>
 
 <view class="page">
-    <text>pages/requestSubscribe/index.wxml</text>
+    <view>
+        <view style="font-size: 36rpx; padding: 30rpx 10rpx;">
+            <view>为保障您能及时收到预约成功、签到成功的通知</view>
+            <view>请按照下面的引导进行<text class="highlight-text">通知订阅</text>：</view>
+        </view>
 
-    <button bind:tap="requestSubscribe"> 订阅通知测试按钮
-    </button>
-    
+        <view style="text-align: center;padding: 10rpx 5% 30rpx;">
+            <button bind:tap="requestSubscribe" style="font-size: 38rpx">1. 点击此按钮</button>
+        </view>
+
+        <view style="font-size: 38rpx; text-align: center;padding: 10rpx 5% 10rpx;">
+            <text>2. 按照下图引导选择通知内容<text class="highlight-text">并勾选“总是保持以上选择”</text></text>
+            <image mode="widthFix"style="width: 90%;" src="https://libseat.littleking.site/static/subscribe.jpg"  show-menu-by-longpress="true"></image>
+        </view>
+
+
+
+    </view>
+
+
 </view>

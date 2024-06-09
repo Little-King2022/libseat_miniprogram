@@ -89,33 +89,41 @@ Page({
         stu_pwd: "",
         checkLoginPwdTips: "默认密码为njfu+身份证后6位+!",
         showMyResvList: true,
-        haveNotifi: false
+        haveNotifi: false,
     },
     methods: {
 
     },
 
     showRequestSubscribeMessage() {
-        // 计算偏移量
-        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 110 + 'rpx';
-        Message.info({
-            context: this,
-            offset: [navigationBarHeight, 20],
-            icon: 'notification-filled',
-            content: '若您需要接收“预约成功”和“签到成功”的通知，请先点击右侧按钮授权',
-            marquee: {
-                speed: 70,
-                loop: -1,
-                delay: 0
-            },
-            duration: 30000,
-            link: {
-                content: '点击订阅通知',
-                navigatorProps: {
-                    url: '/pages/requestSubscribe/index?seat=123',
+        if (this.data.isLogin == "true") {
+            // 计算偏移量
+            const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 110 + 'rpx';
+            Message.info({
+                context: this,
+                offset: [navigationBarHeight, 20],
+                icon: 'notification-filled',
+                content: '若您需要接收“预约成功”和“签到成功”的通知，请先点击右侧按钮授权',
+                marquee: {
+                    speed: 70,
+                    loop: -1,
+                    delay: 0
                 },
-            },
-        });
+                duration: 30000,
+                closeBtn: true,
+                link: {
+                    content: '点击订阅通知',
+                    navigatorProps: {
+                        url: '/pages/requestSubscribe/index',
+                    },
+                },
+            });
+        } else {
+            this.setData({
+                isPopupHidden: true,
+            })
+        };
+
     },
     // 服务器拉取通知
     fetchNotifications() {
@@ -128,12 +136,11 @@ Page({
                     const count = res.data['count']
                     if (count > 0) {
                         const notifications = res.data['notifications'];
-                        for(var i = 0; i<count; i++){
+                        for (var i = 0; i < count; i++) {
                             const id = notifications[i]['id'];
-                            if (wx.getStorageSync(id)){
+                            if (wx.getStorageSync(id)) {
                                 continue;
-                            }
-                            else{
+                            } else {
                                 that.setData({
                                     haveNotifi: true
                                 });
@@ -151,7 +158,7 @@ Page({
         });
     },
     showMessage(content) {
-        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 110 + 'rpx' ;
+        const navigationBarHeight = wx.getSystemInfoSync().statusBarHeight + 110 + 'rpx';
         Message.info({
             context: this,
             offset: [navigationBarHeight, 20],
@@ -163,6 +170,7 @@ Page({
                 delay: 0
             },
             duration: 30000,
+            closeBtn: true,
             link: {
                 content: '查看通知',
                 navigatorProps: {
@@ -175,11 +183,6 @@ Page({
     navigateToNotifiDetail(notification) {
         wx.navigateTo({
             url: '/pages/showNotifi/index',
-            success: function (res) {
-                res.eventChannel.emit('sendData', {
-                    content: notification.content
-                });
-            }
         });
     },
     changePages(e) {
@@ -229,7 +232,11 @@ Page({
             currentPage: 'my',
         });
     },
-
+    jumpToSubscribeNotifi() {
+        wx.navigateTo({
+            url: '/pages/requestSubscribe/index',
+        });
+    },
     // 登录区
     onLoginTabsClick(e) {
         this.setData({

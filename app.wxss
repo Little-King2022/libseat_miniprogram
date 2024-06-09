@@ -29,4 +29,21 @@
     background: #e7e7e7;
 }
 
+/* 荧光笔效果 */
+.highlight-text {
+    position: relative;
+    display: inline-block;
+}
+.highlight-text::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 65%;
+    background-color: #ccffcc;
+    z-index: -1;
+    border-radius: 3px;
+}
+
 /* @import './app-wxa-auto-dark.wxss' */

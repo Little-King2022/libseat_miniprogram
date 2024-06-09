@@ -86,7 +86,7 @@
             <t-input bind:change="bindSeatInput" confirm-type="search" placeholder="请输入后三位数字" borderless="true" clearable style="{{home_input_style}}" align="left" label="座位编号:" />
         </view>
         <view class="home-picker" style="width: 70%; text-align: center; margin: 0 auto;" hidden="{{isSeatPickerHidden}}">
-            <t-cell-group theme="card" bordered="true" >
+            <t-cell-group theme="card" bordered="true">
                 <block wx:for="{{seatList}}" wx:key="index">
                     <t-cell title="{{item}}" hover note="选择" arrow bind:tap="bindSeatSelect" data-item="{{item}}" />
                 </block>
@@ -182,7 +182,7 @@
         <view style="margin: 0 10%;">
             <t-button bind:tap="webLink" theme="light" size="large" block>点击此处复制网页版链接</t-button>
         </view>
-        
+
         <text user-select="{{true}}">2.查询座位、预约信息、远程签到等功能：</text>
         <text user-select="{{true}}">在此小程序内。</text>
     </view>
@@ -207,7 +207,8 @@
                 <t-cell-group theme="card" bordered="{{true}}" style="--td-cell-height: 85rpx !important;">
                     <t-cell title="我的信用分" note="{{credit}}" leftIcon="verify" hover />
                     <t-cell title="绑定手机号" note="{{stuPhone}}" leftIcon="mobile" hover arrow />
-                    <t-cell title="选择通知方式" leftIcon="notification" hover arrow />
+                    <t-cell title="通知方式" note="微信通知" leftIcon="notification" hover arrow />
+                    <t-cell bind:click="jumpToSubscribeNotifi" title="订阅微信通知" leftIcon="check-rectangle" hover arrow />
                     <t-cell bind:click="showHelpInfo" title="常见问题指南" leftIcon="questionnaire" hover arrow />
                     <t-cell bind:click="showComment" title="求好评🤗" leftIcon="thumb-up" hover arrow />
                 </t-cell-group>
