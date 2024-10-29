@@ -20,7 +20,8 @@
             "outputPath": ""
         },
         "minifyWXML": true,
-        "minifyWXSS": true
+        "minifyWXSS": true,
+        "condition": false
     },
     "condition": {},
     "editorSetting": {

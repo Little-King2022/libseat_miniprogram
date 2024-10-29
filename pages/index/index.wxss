@@ -109,6 +109,19 @@
     font-weight: bold;
 }
 
+/* resv页面 */
+.resv-seat-list{
+    text-align: center;
+    margin: 10px auto -1px;
+    color: rgb(43, 92, 255);
+}
+.resv-detail{
+    text-align: left;
+    margin: 10px auto;
+    margin-left: 10px;
+    color: rgb(43, 92, 255);
+}
+
 /* my页面 */
 .user-info button::after {
     border-style: none;

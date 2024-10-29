@@ -31,7 +31,7 @@
                                 <view>您还可以点击上方按钮或长按扫描下方二维码，获取3天的使用次数。</view>
                             </view>
                             <view class="qatitle">2.每天的自动预约时间?</view>
-                            <view class="qacontent">每天的7:00，系统将自动执行抢座任务，所预约的时间段为<text class="atten">下一天的</text>9:30-22:00 (每周五为20:00结束)。</view>
+                            <view class="qacontent">每天的7:00，系统将自动执行抢座任务，所预约的时间段为<text class="atten">下一天的</text>8:00-22:00 (每周五为20:00结束)。</view>
                             <view class="qatitle">3.每天的自动签到时间？</view>
                             <view class="qacontent" space="ensp">只要您激活了VIP，无论是否创建了抢座计划，系统都会在每天的7:30-20:00期间，<text class="atten">每30分钟</text>自动检测并为所有需要签到的用户进行签到哦。</view>
                             <view class="qatitle">4.如何进行远程 or 手动签到？</view>
@@ -78,6 +78,18 @@
             </view>
         </view>
     </t-popup>
+    <!-- vip提示popup -->
+    <t-popup visible="{{isVipPopupHidden}}" placement="bottom" close-on-overlay-click close-btn>
+        <view class="popup" style="text-align: left;">
+            <view style="font-size: 36rpx;margin-bottom: 20rpx;"><text>
+                    Hi👋 自动预约&签到为<text class="highlight-text">付费功能</text>
+                    请先联系客服激活
+                </text></view>
+            <view>
+                <t-button bind:tap="showHelpInfo" theme="light" size="large" style="font-size: 40rpx;" block icon="gesture-click">联系客服</t-button>
+            </view>
+        </view>
+    </t-popup>
     <!-- 首页View -->
     <view id="home" hidden="{{isHomeHidden}}" style="height: 100%;">
         <view class="input-title">座位查询</view>
@@ -88,7 +100,7 @@
         <view class="home-picker" style="width: 70%; text-align: center; margin: 0 auto;" hidden="{{isSeatPickerHidden}}">
             <t-cell-group theme="card" bordered="true">
                 <block wx:for="{{seatList}}" wx:key="index">
-                    <t-cell title="{{item}}" hover note="选择" arrow bind:tap="bindSeatSelect" data-item="{{item}}" />
+                    <t-cell title="{{item}}" hover note="查询" arrow bind:tap="bindSeatSelect" data-item="{{item}}" />
                 </block>
             </t-cell-group>
         </view>
@@ -98,12 +110,12 @@
         <view class="input-title">读者查询</view>
         <view class="input-tips">按学号或姓名查询座位预约记录</view>
         <view class="home-input">
-            <t-input bind:change="bindResvInput" confirm-type="search" placeholder="支持模糊搜索" borderless="true" clearable style="{{home_input_style}}" align="left" label="学号/姓名:" />
+            <t-input bind:change="bindStuInput" confirm-type="search" placeholder="支持模糊搜索" borderless="true" clearable style="{{home_input_style}}" align="left" label="学号/姓名:" />
         </view>
         <view class="home-picker" style="width: 80%; text-align: center; margin: 0 auto;" hidden="{{isStuPickerHidden}}">
             <t-cell-group theme="card" bordered="true">
                 <block wx:for="{{stuList}}" wx:key="index">
-                    <t-cell title="{{item}}" hover note="选择" arrow bind:tap="bindStuSelect" data-item="{{item}}" />
+                    <t-cell title="{{item}}" hover note="查询" arrow bind:tap="bindStuSelect" data-item="{{item}}" />
                 </block>
             </t-cell-group>
         </view>
@@ -176,15 +188,52 @@
         <!-- <text>\n\n\n\n\n\n\n</text> -->
     </view>
     <!-- 预约View -->
-    <view id="resv" hidden="{{isResvHidden}}" style="height: 100%; margin: 8% 10px 10px;">
-        <text user-select="{{true}}">1.创建抢座计划(只需创建一次，每天自动抢座)：</text>
-        <text user-select="{{true}}">https://libseat.littleking.site</text>
-        <view style="margin: 0 10%;">
-            <t-button bind:tap="webLink" theme="light" size="large" block>点击此处复制网页版链接</t-button>
+    <view id="resv" hidden="{{isResvHidden}}" style="height: 100%;">
+        <!-- 新增预约计划 -->
+        <view class="input-title">新增预约任务</view>
+        <view class="input-tips">在此选取座位后，每天将自动抢座</view>
+        <!-- 座位预选列表 -->
+        <view wx:if="{{showResvSelectList}}" class="resv-seat-list">
+            <view>座位预选列表</view>
+            <view>{{resvSeatNameList}}</view>
+            <button bindtap="clearResvSeatList">清空预选座位列表</button>
         </view>
-
-        <text user-select="{{true}}">2.查询座位、预约信息、远程签到等功能：</text>
-        <text user-select="{{true}}">在此小程序内。</text>
+        <view class="home-input">
+            <t-input bind:change="bindResvSeatInput" confirm-type="search" placeholder="请输入后三位数字" borderless="true" clearable style="{{home_input_style}}" align="left" label="座位编号:" />
+        </view>
+        <view class="home-picker" style="width: 70%; text-align: center; margin: 0 auto;" hidden="{{isResvSeatPickerHidden}}">
+            <t-cell-group theme="card" bordered="true">
+                <block wx:for="{{resvSeatList}}" wx:key="index">
+                    <t-cell title="{{item.seat_name}}" hover note="添加预选" arrow bind:tap="bindResvSeatSelect" data-item="{{item}}" />
+                </block>
+            </t-cell-group>
+        </view>
+        <!-- 提交 -->
+        <view style="margin: 20px 20% 0;">
+            <t-button bind:tap="submitResvList" theme="light" variant="outline" size="middle" style="font-size: 32rpx; margin: 0 0 5px;" block>提交预约任务</t-button>
+            <t-button bind:tap="showSeatPDF" theme="primary" variant="outline" size="middle" style="font-size: 32rpx; margin: 0 0 5px;" block>查看图书馆座位图</t-button>
+            <t-button wx:if="{{showNowResvDetail}}" bind:tap="deleteResvList" theme="danger" size="middle" style="font-size: 32rpx;" block>删除预约任务</t-button>
+        </view>
+        <view style="text-align:center;margin: 10px auto 30px;" >
+            <text>默认预约时间段为：8:00～22:00（周五为20:00）</text>
+        </view>
+        
+        <!-- 历史预约任务 -->
+        <view wx:if="{{showNowResvDetail}}">
+            <t-divider></t-divider>
+            <view class="input-title">当前预约任务</view>
+            <view class="input-tips">此处显示正在执行的预约任务</view>
+            <view class="resv-detail" style="margin-bottom: 30%;">
+                <view>预约账户：<text style="color: black;">{{taskStuId}}</text></view>
+                <view>创建时间：<text style="color: black;">{{taskCreateTime}}</text></view>
+                <view style="margin-top: 5px; text-align: center;">预选座位列表</view>
+                <view style="color: black; font-size:smaller; text-align: center;">{{taskSeatNameList}}</view>
+                <view style="margin-top: 5px; text-align: center;" wx:if="{{lastResvResult}}">任务执行结果</view>
+                <rich-text wx:if="{{lastResvResult}}" style="color: black; font-size:smaller; text-align: center;" nodes="{{lastResvResult}}" />
+                <view style="margin-top: 5px; text-align: center;" wx:if="{{lastResvLog}}">任务执行日志</view>
+                <rich-text wx:if="{{lastResvLog}}" style="color: black; font-size:smaller" nodes="{{lastResvLog}}" />
+            </view>
+        </view>
     </view>
     <!-- 我的View -->
     <view id="my" hidden="{{isMyHidden}}">
@@ -196,19 +245,20 @@
                 <t-badge wx:if="{{isLogin === 'false'}}" count="未登录" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
-                <t-badge wx:if="{{isLogin === 'true'}}" count="已登录" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
+                <t-badge wx:if="{{isLogin === 'true' && isVip === false}}" count="已登录，未激活VIP" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
-                <t-badge wx:if="{{isVIP === 'true'}}" count="已激活VIP" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
+                <t-badge wx:if="{{isLogin === 'true' && isVip === true}}" count="已激活VIP" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
             </view>
             <view wx:if="{{isLogin === 'true'}}">
                 <t-cell-group theme="card" bordered="{{true}}" style="--td-cell-height: 85rpx !important;">
                     <t-cell title="我的信用分" note="{{credit}}" leftIcon="verify" hover />
-                    <t-cell title="绑定手机号" note="{{stuPhone}}" leftIcon="mobile" hover arrow />
-                    <t-cell title="通知方式" note="微信通知" leftIcon="notification" hover arrow />
+                    <t-cell title="绑定手机号" note="{{stuPhone}}" leftIcon="mobile" hover />
+                    <t-cell title="通知方式" note="微信通知" leftIcon="notification" hover />
                     <t-cell bind:click="jumpToSubscribeNotifi" title="订阅微信通知" leftIcon="check-rectangle" hover arrow />
+                    <t-cell bind:click="showAutoSignInfo" title="自动签到" note="已开启" leftIcon="user-checked-1" hover arrow />
                     <t-cell bind:click="showHelpInfo" title="常见问题指南" leftIcon="questionnaire" hover arrow />
                     <t-cell bind:click="showComment" title="求好评🤗" leftIcon="thumb-up" hover arrow />
                 </t-cell-group>

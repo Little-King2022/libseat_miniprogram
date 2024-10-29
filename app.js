@@ -1,5 +1,8 @@
 // app.js
 App({
+    data: {
+        isVip: false
+    },
     onLaunch() {
         wx.showLoading({
             title: '加载中'
@@ -47,6 +50,7 @@ App({
                                     wx.setStorageSync('isLogin', "true");
                                     wx.setStorageSync('login_stu_id', res.data['stu_id']);
                                     wx.setStorageSync('token', res.data['token']);
+                                    wx.setStorageSync('isVip', "true");
                                 } else {
                                     wx.setStorageSync('isLogin', 'false');
                                     wx.showToast({
