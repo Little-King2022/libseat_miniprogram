@@ -14,7 +14,7 @@
 <view class="page">
     <!-- 悬浮按钮区 -->
     <t-fab icon="chat-bubble-help" bind:click="showHelpInfo" aria-label="联系客服" style="right: 16px; bottom: 190rpx;z-index: 997;"></t-fab>
-    <t-fab icon="check-rectangle" bind:click="showRequestSubscribeMessage" aria-label="订阅通知" style="right: 16px; bottom: 300rpx;z-index: 998;"></t-fab>
+    <!-- <t-fab icon="check-rectangle" bind:click="showRequestSubscribeMessage" aria-label="订阅通知" style="right: 16px; bottom: 300rpx;z-index: 998;"></t-fab> -->
 
     <!-- 联系客服Dialog -->
     <view>
@@ -248,7 +248,7 @@
                 <t-badge wx:if="{{isLogin === 'true' && isVip === false}}" count="已登录，未激活VIP" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
-                <t-badge wx:if="{{isLogin === 'true' && isVip === true}}" count="已激活VIP" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
+                <t-badge wx:if="{{isLogin === 'true' && isVip === true}}" count="已激活VIP" shape="bubble" ariaRole="button" offset="{{[10,-5]}}">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
             </view>
@@ -256,8 +256,10 @@
                 <t-cell-group theme="card" bordered="{{true}}" style="--td-cell-height: 85rpx !important;">
                     <t-cell title="我的信用分" note="{{credit}}" leftIcon="verify" hover />
                     <t-cell title="绑定手机号" note="{{stuPhone}}" leftIcon="mobile" hover />
-                    <t-cell title="通知方式" note="微信通知" leftIcon="notification" hover />
-                    <t-cell bind:click="jumpToSubscribeNotifi" title="订阅微信通知" leftIcon="check-rectangle" hover arrow />
+                    
+                    <t-cell wx:if="{{isIOS}}" title="通知方式" note="iOS推送服务" leftIcon="notification" hover />
+                    <t-cell wx:else="{{isIOS}}" title="通知方式" note="暂无可用通知方式" leftIcon="notification" hover />
+                    <t-cell wx:if="{{isIOS}}" bind:click="jumpToSubscribeNotifi" title="绑定iOS推送" leftIcon="logo-apple" hover arrow />
                     <t-cell bind:click="showAutoSignInfo" title="自动签到" note="已开启" leftIcon="user-checked-1" hover arrow />
                     <t-cell bind:click="showHelpInfo" title="常见问题指南" leftIcon="questionnaire" hover arrow />
                     <t-cell bind:click="showComment" title="求好评🤗" leftIcon="thumb-up" hover arrow />

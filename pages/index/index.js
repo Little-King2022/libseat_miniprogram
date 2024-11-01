@@ -106,6 +106,7 @@ Page({
         taskSeatNameList: "",
         taskCreateTime: "",
         showNowResvDetail: false,
+        isIOS: wx.getStorageSync('isIOS')
     },
     methods: {
 
@@ -642,19 +643,20 @@ Page({
             wx.request({
                 url: 'https://libseat.littleking.site/libseat/get_inlibnum',
                 method: 'GET',
+                contentType: 'application/json',
                 header: {
                     'Cookie': wx.getStorageSync('auth_cookie')
                 },
                 success: (res) => {
                     try {
                         res = res.data;
-                        var current_count = res.current_count;
-                        var remain_count = res.remaining_count;
-                        this.setData({
-                            inLibPercentage: (current_count / 50).toFixed(0),
-                            inLibCount: current_count,
-                            remainCount: remain_count,
-                        });
+                        if (res.result == "success"){
+                            this.setData({
+                                inLibPercentage: (res.current_count / 50).toFixed(0),
+                                inLibCount: res.current_count,
+                                remainCount: res.remaining_count,
+                            });
+                        }
                     } catch (e) {
                         console.log(e)
                     }
@@ -1187,7 +1189,8 @@ Page({
                 if (res.data['result'] == 'success') {
                     this.setData({
                         stuPhone: res.data['stu_phone'],
-                        credit: res.data['credit'] + '/600 分'
+                        credit: res.data['credit'] + '/600 分',
+                        nickName: this.data.nickName + ' ' + res.data['stu_name']
                     });
                 } else {
                     wx.showToast({

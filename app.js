@@ -30,8 +30,7 @@ App({
                     wx.hideLoading();
                     if (wx.getStorageSync('isLogin') == '' || wx.getStorageSync('isLogin') == 'false') {
                         wx.setStorageSync('isLogin', 'false');
-                    }
-                    else if (wx.getStorageSync('isLogin') == 'true' && wx.getStorageSync('token').length == 22 && wx.getStorageSync('login_stu_id').length >= 9) {
+                    } else if (wx.getStorageSync('isLogin') == 'true' && wx.getStorageSync('token').length == 22 && wx.getStorageSync('login_stu_id').length >= 9) {
                         wx.request({
                             url: 'https://libseat.littleking.site/wxapi/wxmplogin',
                             method: 'POST',
@@ -92,6 +91,18 @@ App({
                 })
             }
         });
+
+        // 获取系统信息
+        const systemInfo = wx.getSystemInfoSync();
+
+        // 判断操作系统
+        if (systemInfo.platform === 'ios' || systemInfo.platform === 'mac') {
+            wx.setStorageSync('isIOS', true);
+            console.log("iOS");
+        } else {
+            wx.setStorageSync('isIOS', false);
+            console.log("Not iOS");
+        }
 
 
 
