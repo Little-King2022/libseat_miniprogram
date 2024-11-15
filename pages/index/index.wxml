@@ -79,12 +79,16 @@
         </view>
     </t-popup>
     <!-- vip提示popup -->
-    <t-popup visible="{{isVipPopupHidden}}" placement="bottom" close-on-overlay-click close-btn>
+    <t-popup visible="{{isVipPopupHidden}}" bind:visible-change="onVIPPopupVisibleChange" placement="bottom" close-on-overlay-click close-btn>
         <view class="popup" style="text-align: left;">
-            <view style="font-size: 36rpx;margin-bottom: 20rpx;"><text>
-                    Hi👋 自动预约&签到为<text class="highlight-text">付费功能</text>
-                    请先联系客服激活
-                </text></view>
+            <view style="font-size: 36rpx;margin-bottom: 20rpx;"><text decode="{{true}}">
+
+                    Hi👋 此功能仅对<text class="highlight-text">VIP用户开放</text>
+                </text>
+                <text decode="{{true}}">
+
+                    目前VIP会员已售罄，敬请期待</text>
+            </view>
             <view>
                 <t-button bind:tap="showHelpInfo" theme="light" size="large" style="font-size: 40rpx;" block icon="gesture-click">联系客服</t-button>
             </view>
@@ -245,24 +249,22 @@
                 <t-badge wx:if="{{isLogin === 'false'}}" count="未登录" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
                     <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
                 </t-badge>
-                <t-badge wx:if="{{isLogin === 'true' && isVip === false}}" count="已登录，未激活VIP" shape="bubble" ariaRole="button" offset="{{[-20,-5]}}">
-                    <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
+                <t-badge wx:if="{{isLogin === 'true' && user.is_vip === false}}" count="已登录，未激活VIP" shape="bubble" ariaRole="button" offset="{{[20,-5]}}">
+                    <input type="nickname" class="weui-input" value="{{user.stu_id + ' ' + user.stu_name}}" placeholder="小程序游客用户" />
                 </t-badge>
-                <t-badge wx:if="{{isLogin === 'true' && isVip === true}}" count="已激活VIP" shape="bubble" ariaRole="button" offset="{{[10,-5]}}">
-                    <input type="nickname" class="weui-input" value="{{nickName}}" placeholder="小程序游客用户" />
+                <t-badge wx:if="{{isLogin === 'true' && user.is_vip === true}}" count="已激活VIP" shape="bubble" ariaRole="button" offset="{{[10,-5]}}">
+                    <input type="nickname" class="weui-input" value="{{user.stu_id + ' ' + user.stu_name}}" placeholder="小程序游客用户" />
                 </t-badge>
             </view>
             <view wx:if="{{isLogin === 'true'}}">
                 <t-cell-group theme="card" bordered="{{true}}" style="--td-cell-height: 85rpx !important;">
-                    <t-cell title="我的信用分" note="{{credit}}" leftIcon="verify" hover />
-                    <t-cell title="绑定手机号" note="{{stuPhone}}" leftIcon="mobile" hover />
-                    
-                    <t-cell wx:if="{{isIOS}}" title="通知方式" note="iOS推送服务" leftIcon="notification" hover />
-                    <t-cell wx:else="{{isIOS}}" title="通知方式" note="暂无可用通知方式" leftIcon="notification" hover />
-                    <t-cell wx:if="{{isIOS}}" bind:click="jumpToSubscribeNotifi" title="绑定iOS推送" leftIcon="logo-apple" hover arrow />
-                    <t-cell bind:click="showAutoSignInfo" title="自动签到" note="已开启" leftIcon="user-checked-1" hover arrow />
+                    <t-cell title="我的信用分" note="{{user.credit}} / 600 分" leftIcon="verify" hover />
+                    <t-cell wx:if="{{user.stu_phone}}" title="绑定手机号" note="{{user.stu_phone}}" leftIcon="mobile" hover />
+                    <t-cell wx:if="{{isIOS && user.is_vip}}" title="通知方式" note="iOS推送服务" leftIcon="notification" hover />
+                    <t-cell wx:if="{{!isIOS && user.is_vip}}" title="通知方式" note="暂无可用通知方式" leftIcon="notification" hover />
+                    <t-cell wx:if="{{isIOS && user.is_vip}}" bind:click="jumpToSubscribeNotifi" title="绑定iOS推送" leftIcon="logo-apple" hover arrow />
+                    <t-cell wx:if="{{user.is_vip}}" bind:click="showComment" title="求好评🤗" leftIcon="thumb-up" hover arrow />
                     <t-cell bind:click="showHelpInfo" title="常见问题指南" leftIcon="questionnaire" hover arrow />
-                    <t-cell bind:click="showComment" title="求好评🤗" leftIcon="thumb-up" hover arrow />
                 </t-cell-group>
             </view>
         </view>
@@ -381,7 +383,7 @@
 <view>
     <t-tab-bar class="index-tab-bar" value="{{currentPage}}" bindchange="changePages" shape="round" theme="tag" split="true">
         <t-tab-bar-item value="home" icon="home" ariaLabel="首页">首页</t-tab-bar-item>
-        <t-tab-bar-item value="resv" icon="assignment-checked" ariaLabel="自动预约&签到">自动预约&签到</t-tab-bar-item>
+        <t-tab-bar-item value="resv" icon="assignment-checked" ariaLabel="自动预约">自动预约</t-tab-bar-item>
         <t-tab-bar-item value="my" icon="user" ariaLabel="我的">我的</t-tab-bar-item>
     </t-tab-bar>
 </view>

@@ -34,12 +34,8 @@ Page({
             }
             this.setData({
                 isLogin: wx.getStorageSync('isLogin'),
-                nickName: wx.getStorageSync('login_stu_id'),
             });
-            if (wx.getStorageSync('isVip')) {
-                this.setData({
-                    isVip: true
-                });
+            if (wx.getStorageSync('isLogin')) {
                 this.getNowResvDetail();
             }
         }, 800);
@@ -97,7 +93,6 @@ Page({
         checkLoginPwdTips: "默认密码为njfu+身份证后6位+!",
         showMyResvList: true,
         haveNotifi: false,
-        isVip: false,
         isResvSeatPickerHidden: true,
         resvSeatNameList: [],
         resvSeatIdList: [],
@@ -106,7 +101,8 @@ Page({
         taskSeatNameList: "",
         taskCreateTime: "",
         showNowResvDetail: false,
-        isIOS: wx.getStorageSync('isIOS')
+        isIOS: wx.getStorageSync('isIOS'),
+        user: {}
     },
     methods: {
 
@@ -213,7 +209,8 @@ Page({
         }
         if (e.detail.value == 'resv') {
             if (wx.getStorageSync('isLogin') == "true") {
-                if (wx.getStorageSync('isVip')) {
+                if (this.data.user.is_vip) {
+                    this.getNowResvDetail();
                     this.setData({
                         isHomeHidden: true,
                         isResvHidden: false,
@@ -255,7 +252,7 @@ Page({
     },
     jumpToSubscribeNotifi() {
         wx.navigateTo({
-            url: '/pages/requestSubscribe/index',
+            url: '/pages/barkSubscribe/index',
         });
     },
     // 登录区
@@ -416,13 +413,10 @@ Page({
                         if (res.data['result'] == 'success' && (res.data['token']).length == 22) {
                             this.setData({
                                 isLogin: "true",
-                                nickName: res.data['stu_id'],
-                                isVip: true,
                             });
                             wx.setStorageSync('isLogin', "true");
                             wx.setStorageSync('login_stu_id', res.data['stu_id']);
                             wx.setStorageSync('token', res.data['token']);
-                            wx.setStorageSync('isVip', true);
                             wx.showToast({
                                 title: '登录成功',
                                 duration: 1000,
@@ -468,14 +462,11 @@ Page({
                         success: (res) => {
                             if (res.data['result'] == 'success' && (res.data['token']).length == 22) {
                                 this.setData({
-                                    isLogin: "true",
-                                    nickName: res.data['stu_id'],
-                                    isVip: true,
+                                    isLogin: "true"
                                 });
                                 wx.setStorageSync('isLogin', "true");
                                 wx.setStorageSync('login_stu_id', res.data['stu_id']);
                                 wx.setStorageSync('token', res.data['token']);
-                                wx.setStorageSync('isVip', true);
                                 wx.showToast({
                                     title: '登录成功',
                                     duration: 1000,
@@ -537,14 +528,11 @@ Page({
                         success: (res) => {
                             if (res.data['result'] == 'success' && (res.data['token']).length == 22) {
                                 this.setData({
-                                    isLogin: "true",
-                                    isVip: true,
-                                    nickName: res.data['stu_id']
+                                    isLogin: "true"
                                 });
                                 wx.setStorageSync('isLogin', "true");
                                 wx.setStorageSync('login_stu_id', res.data['stu_id']);
                                 wx.setStorageSync('token', res.data['token']);
-                                wx.setStorageSync('isVip', true);
                                 wx.showToast({
                                     title: '登录成功',
                                     duration: 1000,
@@ -594,7 +582,7 @@ Page({
                 if (wx.getStorageSync('isLogin') == "true") {
                     this.getMyResvList();
                 }
-            }, 1500)
+            }, 2500)
             setTimeout(() => {
                 if (wx.getStorageSync('isLogin') == "true") {
                     this.getMyInfo();
@@ -606,10 +594,18 @@ Page({
         wx.setStorageSync('isLogin', "false");
         wx.removeStorageSync('login_stu_id');
         wx.removeStorageSync('token');
+        wx.removeStorageSync('barkToken');
+        wx.removeStorageSync('isVip');
         this.setData({
             isLogin: "false",
             nickName: "",
-            showMyResvList: true
+            showMyResvList: true,
+            taskCreateTime: null,
+            taskSeatNameList: null,
+            taskSeatNameList: null,
+            taskStuId: null,
+            user: null,
+            lastResvLog: null
         });
         wx.showToast({
             title: '注销成功',
@@ -624,6 +620,11 @@ Page({
     onPopupVisibleChange(e) {
         this.setData({
             isPopupHidden: e.detail.visible,
+        });
+    },
+    onVIPPopupVisibleChange(e) {
+        this.setData({
+            isVipPopupHidden: e.detail.visible,
         });
     },
 
@@ -641,7 +642,7 @@ Page({
     getLibNum() {
         if (wx.getStorageSync('isAuth') == "true") {
             wx.request({
-                url: 'https://libseat.littleking.site/libseat/get_inlibnum',
+                url: 'https://libseat.littleking.site/wxapi/get_inlibnum',
                 method: 'GET',
                 contentType: 'application/json',
                 header: {
@@ -667,7 +668,7 @@ Page({
     getResvNum() {
         if (wx.getStorageSync('isAuth') == "true") {
             wx.request({
-                url: 'https://libseat.littleking.site/libseat/get_all_resv',
+                url: 'https://libseat.littleking.site/wxapi/get_all_resv',
                 method: 'GET',
                 header: {
                     'Cookie': wx.getStorageSync('auth_cookie')
@@ -686,7 +687,7 @@ Page({
             })
             for (let i = 2; i <= 6; i++) {
                 wx.request({
-                    url: 'https://libseat.littleking.site/libseat/get_room_resv/' + i,
+                    url: 'https://libseat.littleking.site/wxapi/get_room_resv/' + i,
                     method: 'GET',
                     contentType: 'application/json',
                     header: {
@@ -717,7 +718,7 @@ Page({
             })
         }
         wx.request({
-            url: 'https://libseat.littleking.site/libseat/search_seat_by_name',
+            url: 'https://libseat.littleking.site/wxapi/search_seat_by_name',
             method: 'POST',
             header: {
                 'content-type': 'application/x-www-form-urlencoded',
@@ -747,7 +748,7 @@ Page({
             })
         }
         wx.request({
-            url: 'https://libseat.littleking.site/libseat/search_stu',
+            url: 'https://libseat.littleking.site/wxapi/search_stu',
             method: 'POST',
             header: {
                 'content-type': 'application/x-www-form-urlencoded',
@@ -804,7 +805,7 @@ Page({
             })
         }
         wx.request({
-            url: 'https://libseat.littleking.site/libseat/search_seat_v2',
+            url: 'https://libseat.littleking.site/wxapi/search_seat_v2',
             method: 'POST',
             header: {
                 'content-type': 'application/x-www-form-urlencoded',
@@ -878,7 +879,7 @@ Page({
 
         // 发送请求到服务器
         wx.request({
-            url: 'https://libseat.littleking.site/libseat/submit/auto_appo_v2', // 服务器URL
+            url: 'https://libseat.littleking.site/wxapi/submit_auto_appo', // 服务器URL
             method: 'POST',
             data: JSON.stringify(dataToSend),
             header: {
@@ -923,7 +924,7 @@ Page({
                 }
                 if (res.confirm) {
                     wx.request({
-                        url: 'https://libseat.littleking.site/libseat/submit/delete_appo', // 服务器URL
+                        url: 'https://libseat.littleking.site/wxapi/delete_auto_appo', // 服务器URL
                         method: 'GET',
                         header: {
                             'content-type': 'application/json',
@@ -1093,11 +1094,7 @@ Page({
                             duration: 2000,
                         })
                     } else {
-                        wx.showToast({
-                            title: '请求失败',
-                            icon: 'error',
-                            duration: 1000,
-                        })
+                        this.getMyResvList()
                     }
                 },
                 fail: (res) => {
@@ -1120,7 +1117,7 @@ Page({
         var resvid = res.detail.currentTarget.dataset.custom;
         var that = this;
         wx.request({
-            url: "https://libseat.littleking.site/libseat/get_resvinfo/" + resvid,
+            url: "https://libseat.littleking.site/wxapi/get_resv_info/" + resvid,
             method: "GET",
             dataType: "json",
             header: {
@@ -1186,15 +1183,14 @@ Page({
             },
             dataType: 'json',
             success: (res) => {
-                if (res.data['result'] == 'success') {
+                if (res.statusCode == 200) {
                     this.setData({
-                        stuPhone: res.data['stu_phone'],
-                        credit: res.data['credit'] + '/600 分',
-                        nickName: this.data.nickName + ' ' + res.data['stu_name']
+                        user: res.data,
                     });
+                    wx.setStorageSync('barkToken', res.data.bark_token)
                 } else {
                     wx.showToast({
-                        title: '请求失败',
+                        title: '获取用户失败',
                         duration: 3000,
                         icon: 'error'
                     });

@@ -52,6 +52,7 @@ App({
                                     wx.setStorageSync('isVip', "true");
                                 } else {
                                     wx.setStorageSync('isLogin', 'false');
+                                    wx.removeStorageSync('login_stu_id');
                                     wx.showToast({
                                         title: '登录状态失效',
                                         duration: 3000,
@@ -96,7 +97,8 @@ App({
         const systemInfo = wx.getSystemInfoSync();
 
         // 判断操作系统
-        if (systemInfo.platform === 'ios' || systemInfo.platform === 'mac') {
+        let platforms = ['ios', 'mac', 'devtools'];
+        if (platforms.includes(systemInfo.platform)) {
             wx.setStorageSync('isIOS', true);
             console.log("iOS");
         } else {

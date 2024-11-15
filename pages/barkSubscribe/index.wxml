@@ -1,0 +1,57 @@
+<!--pages/barkSubscribe/index.wxml-->
+<t-navbar title="订阅iOS通知" class="navbar">
+    <view slot="capsule" class="custom-capsule">
+        <t-icon size="20" bind:tap="onBack" aria-role="button" aria-label="返回" name="chevron-left" class="custom-capsule__icon" />
+        <t-icon size="20" bind:tap="onGoHome" aria-role="button" aria-label="首页" name="home" class="custom-capsule__icon" />
+    </view>
+</t-navbar>
+
+<view class="page">
+    <view wx:if="{{!barkToken}}">
+        <view style="font-size: 38rpx; text-align: center;padding: 30rpx 5% 10rpx;font-weight: bolder;">
+            <text>请粘贴<text class="highlight-text">Bark推送链接</text></text>
+            <t-input bind:change="onInputChange" confirm-type="done" placeholder="Bark推送链接" borderless="{{false}}" clearable align="left" label="请粘贴:" style="{{style}}" />
+            <t-row wx:if="{{validBarkToken}}">
+                <t-col span="10" offset="1">
+                    <t-button style="width: 100%;" bind:tap="testToken">测试推送</t-button>
+                </t-col>
+                <t-col span="10" offset="1">
+                    <t-button theme="light" style="width: 100%;" bind:tap="saveToken">保存</t-button>
+                </t-col>
+            </t-row>
+        </view>
+        <t-divider />
+        <view style="font-size: 38rpx; text-align: center;padding: 10rpx 5% 10rpx;font-weight: bolder;">
+            <text class="highlight-text">订阅iOS系统通知步骤</text>
+        </view>
+
+        <view style="text-align: center;padding: 10rpx 1% 10rpx;background-color: honeydew;">
+            <view>1. 在 APP Store 中下载 <text class="highlight-text">Bark</text> 推送软件</view>
+            <image mode="widthFix" style="width: 90%;" src="https://libseat.littleking.site/static/bark1.jpg" show-menu-by-longpress="true"></image>
+            <view>2. 打开 Bark 推送软件，点击<text class="highlight-text">注册设备</text></view>
+            <image mode="widthFix" style="width: 90%;" src="https://libseat.littleking.site/static/bark2.jpg" show-menu-by-longpress="true"></image>
+            <view>3. 点击<text class="highlight-text">允许通知</text></view>
+            <image mode="widthFix" style="width: 90%;" src="https://libseat.littleking.site/static/bark3.jpg" show-menu-by-longpress="true"></image>
+            <view>4. 点击最上面的一个<text class="highlight-text">复制按钮</text>，粘贴到下方</view>
+            <image mode="widthFix" style="width: 90%;" src="https://libseat.littleking.site/static/bark4.jpg" show-menu-by-longpress="true"></image>
+        </view>
+    </view>
+    <view wx:if="{{barkToken}}" style="text-align: center;padding: 30rpx 5% 10rpx;">
+        <view style="font-size: 38rpx; font-weight: bolder;">
+            已绑定推送Token
+        </view>
+        <view>
+            BarkToken: {{barkToken}}
+        </view>
+        <t-row>
+            <t-col span="10" offset="1">
+                <t-button style="width: 100%;" bind:tap="testToken">测试推送</t-button>
+            </t-col>
+            <t-col span="10" offset="1">
+                <t-button theme="danger" style="width: 100%;" bind:tap="removeToken">关闭推送</t-button>
+            </t-col>
+        </t-row>
+    </view>
+
+
+</view>

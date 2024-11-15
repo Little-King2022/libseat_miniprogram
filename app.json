@@ -4,7 +4,8 @@
         "pages/requestSubscribe/index",
         "pages/seat/index",
         "pages/stu/index",
-        "pages/showNotifi/index"
+        "pages/showNotifi/index",
+        "pages/barkSubscribe/index"
     ],
     "window": {
         "navigationBarTextStyle": "black",

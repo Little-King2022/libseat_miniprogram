@@ -95,7 +95,7 @@ Page({
         var resvid = res.detail.currentTarget.dataset.custom;
         var that = this;
         wx.request({
-            url: "https://libseat.littleking.site/libseat/get_resvinfo/" + resvid,
+            url: "https://libseat.littleking.site/wxapi/get_resv_info/" + resvid,
             method: "GET",
             dataType: "json",
             header: {
