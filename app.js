@@ -100,10 +100,8 @@ App({
         let platforms = ['ios', 'mac', 'devtools'];
         if (platforms.includes(systemInfo.platform)) {
             wx.setStorageSync('isIOS', true);
-            console.log("iOS");
         } else {
             wx.setStorageSync('isIOS', false);
-            console.log("Not iOS");
         }
 
 

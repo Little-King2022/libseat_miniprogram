@@ -1,0 +1,31 @@
+<!--pages/setResvDuration/index.wxml-->
+<t-navbar title="设置预约时段" class="navbar">
+    <view slot="capsule" class="custom-capsule">
+        <t-icon size="20" bind:tap="onBack" aria-role="button" aria-label="返回" name="chevron-left" class="custom-capsule__icon" />
+        <t-icon size="20" bind:tap="onGoHome" aria-role="button" aria-label="首页" name="home" class="custom-capsule__icon" />
+    </view>
+</t-navbar>
+<view class="page" style="padding: 15rpx 3% 50rpx;">
+    <view class="title">请选择开始时间</view>
+    <t-radio-group t-class="horizontal-box" value="{{value}}" bind:change="onChange">
+        <view wx:for="{{timeOptions}}" wx:key="index" class="card {{value == index ? 'card--active' : ''}}" data-index="{{index}}">
+            <t-icon wx:if="{{value == index}}" name="check" t-class="card__icon" />
+            <t-radio value="{{index}}" label="{{item}}" icon="none" borderless />
+        </view>
+    </t-radio-group>
+    <t-divider/>
+    <view class="title" style="padding-top: 20rpx;">请选择结束时间</view>
+    <t-radio-group t-class="horizontal-box2" value="{{value2}}" style="width: 60%;text-align: left;margin: 0 36rpx;">
+        <view wx:for="{{timeOptions2}}" wx:key="index" class="card {{value2 == index ? 'card--active' : ''}}" data-index="{{index}}">
+            <t-icon wx:if="{{value2 == index}}" name="check" t-class="card__icon" />
+            <t-radio value="{{index}}" label="{{item}}" icon="none" borderless />
+        </view>
+    </t-radio-group>
+
+
+
+
+    <view style="width: 80%;text-align: center;margin: 0 auto;padding-top: 48rpx;">
+        <t-button bind:tap="setResvDuration" theme="light" size="large" block>设置预约时段</t-button>
+    </view>
+</view>

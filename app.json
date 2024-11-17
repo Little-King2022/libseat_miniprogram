@@ -5,7 +5,8 @@
         "pages/seat/index",
         "pages/stu/index",
         "pages/showNotifi/index",
-        "pages/barkSubscribe/index"
+        "pages/barkSubscribe/index",
+        "pages/setResvDuration/index"
     ],
     "window": {
         "navigationBarTextStyle": "black",

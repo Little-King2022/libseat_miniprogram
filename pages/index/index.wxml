@@ -25,14 +25,14 @@
                     <view class="content-container">
                         <view style="text-align: center;font-size: 55rpx;font-weight: bold;padding: 32rpx 0 20rpx;">常见问题指南💁🏼</view>
                         <view style="margin: 0 4% 0;">
-                            <view class="qatitle">1.网站是免费使用的吗？</view>
-                            <view class="qacontent" space="ensp"><text class="atten">付费功能：自动预约、自动签到。</text>
+                            <view class="qatitle">1.小程序是免费使用的吗？</view>
+                            <view class="qacontent" space="ensp"><text class="atten">付费功能：自动预约</text>
                                 <view>其他功能您可以免费使用，例如：远程签到、查询座位预约记录、查询读者预约记录等。</view>
-                                <view>您还可以点击上方按钮或长按扫描下方二维码，获取3天的使用次数。</view>
+                                <view>目前VIP会员已售罄，敬请期待后续开放购买</view>
                             </view>
                             <view class="qatitle">2.每天的自动预约时间?</view>
-                            <view class="qacontent">每天的7:00，系统将自动执行抢座任务，所预约的时间段为<text class="atten">下一天的</text>8:00-22:00 (每周五为20:00结束)。</view>
-                            <view class="qatitle">3.每天的自动签到时间？</view>
+                            <view class="qacontent">每天的7:00，系统将自动执行抢座任务，默认预约时段为<text class="atten">下一天的</text>8:00-22:00 (每周五为20:00结束)。</view>
+                            <!-- <view class="qatitle">3.每天的自动签到时间？</view>
                             <view class="qacontent" space="ensp">只要您激活了VIP，无论是否创建了抢座计划，系统都会在每天的7:30-20:00期间，<text class="atten">每30分钟</text>自动检测并为所有需要签到的用户进行签到哦。</view>
                             <view class="qatitle">4.如何进行远程 or 手动签到？</view>
                             <view class="qacontent" space="ensp">
@@ -41,18 +41,18 @@
                                 <view>1、连接上校园网或VPN；</view>
                                 <view>2、在微信客户端中打开；</view>
                                 <view>3、此微信已绑定过“南京林业大学图书馆”微信公众号的读者证。</view>
-                            </view>
-                            <view class="qatitle">5.如何查询某个座位的预约记录？</view>
+                            </view> -->
+                            <view class="qatitle">3.如何查询某个座位的预约记录？</view>
                             <view class="qacontent" space="ensp">
-                                <view>"请您在网站首页的“座位查询”模块输入座位编号的后三位数字进行搜索，然后点击“查询使用记录”。</view>
-                                <view>如果当前座位有用户正在使用，您也可以在下方的“当前使用人信息”模块看到当前用户的各项信息。"</view>
+                                <view>"请您在小程序首页的“座位查询”模块输入座位编号的后三位数字进行搜索，然后选择对应的座位号。</view>
+                                <view>如果当前座位有用户正在使用，您也可以在上方的“当前使用记录”模块看到当前用户的预约信息。"</view>
                             </view>
-                            <view class="qatitle">6.如何查询某个读者的预约记录？</view>
-                            <view class="qacontent" space="ensp">请您在网站首页的“预约查询”模块输入学号或者姓名进行搜索。支持按学号或姓名模糊匹配。</view>
-                            <view class="qatitle">7.如何创建抢座计划？</view>
+                            <view class="qatitle">4.如何查询某个读者的预约记录？</view>
+                            <view class="qacontent" space="ensp">请您在小程序首页的“读者查询”模块输入学号或者姓名进行搜索。支持按学号或姓名模糊匹配。</view>
+                            <view class="qatitle">5.如何新增预约任务？</view>
                             <view class="qacontent" space="ensp">
-                                <view>请您在网站首页的“自动预约&签到”模块输入您的学号，登陆到管理后台进行操作。</view>
-                                <view>在管理后台页面，您可以进行创建、查询和删除抢座计划，查询历史预约记录等操作。</view>
+                                <view>请您在小程序的“自动预约”模块输入最多5个预选座位列表，然后提交预约任务。</view>
+                                <view>新增成功后，您可以查看任务执行结果、任务执行日志、删除预约任务，也可以重新提交预约任务，系统会自动覆盖先前的预约任务。</view>
                             </view>
                             <view class="qacontent"></view>
                             <view class="qacontent"></view>
@@ -131,7 +131,7 @@
         <t-divider content="功能列表" />
         <!-- 数据展示区 -->
         <view class="grid_block">
-            <t-grid column="{{3}}" align="center" hover="true">
+            <t-grid column="{{3}}" align="center">
                 <!-- 第一列 -->
                 <t-grid-item style="width:25%;">
                     <text style="font-weight: bold;font-size: 32rpx;text-align: center;margin: 0 0 5rpx">在馆人数
@@ -154,17 +154,17 @@
                 <!-- 第3列环形进度条 -->
                 <t-grid-item style="width:55%;">
                     <view>
-                        <text style="font-weight: bold;font-size: 32rpx;text-align: center;">各楼层座位预约率
-                        </text>
+                        <text style="font-weight: bold;font-size: 32rpx;text-align: center;">各楼层座位预约率</text>
                     </view>
                     <view style="width: 95%;">
-                        <t-grid column="{{2}}" align="center" hover="true">
+                        <t-grid column="{{2}}" align="center">
                             <t-grid-item style="width:20%;">
                                 <text style="line-height: 41rpx">2楼</text>
                                 <text style="line-height: 41rpx">3楼</text>
                                 <text style="line-height: 41rpx">4楼</text>
                                 <text style="line-height: 41rpx">5楼</text>
                                 <text style="line-height: 41rpx">6楼</text>
+                                <text style="line-height: 41rpx">7楼</text>
                             </t-grid-item>
                             <t-grid-item style="width:80%;">
                                 <view style="width: 80%;margin: 11rpx;">
@@ -181,6 +181,9 @@
                                 </view>
                                 <view style="width: 80%;margin: 11rpx;">
                                     <t-progress class="home-progress" theme="plump" percentage="{{_6fPer}}" style="zoom: 50%;" status="{{_6fPer > 70 ? 'error' : (_6fPer > 50 ? 'warning' : 'success')}}" />
+                                </view>
+                                <view style="width: 80%;margin: 11rpx;">
+                                    <t-progress class="home-progress" theme="plump" percentage="{{_7fPer}}" style="zoom: 50%;" status="{{_6fPer > 70 ? 'error' : (_6fPer > 50 ? 'warning' : 'success')}}" />
                                 </view>
                             </t-grid-item>
                         </t-grid>
@@ -215,13 +218,10 @@
         <!-- 提交 -->
         <view style="margin: 20px 20% 0;">
             <t-button bind:tap="submitResvList" theme="light" variant="outline" size="middle" style="font-size: 32rpx; margin: 0 0 5px;" block>提交预约任务</t-button>
-            <t-button bind:tap="showSeatPDF" theme="primary" variant="outline" size="middle" style="font-size: 32rpx; margin: 0 0 5px;" block>查看图书馆座位图</t-button>
+            <t-button bind:tap="showSeatPDF" theme="primary" variant="outline" size="middle" style="font-size: 32rpx; margin: 0 0 5px;" block>查看座位分布图</t-button>
             <t-button wx:if="{{showNowResvDetail}}" bind:tap="deleteResvList" theme="danger" size="middle" style="font-size: 32rpx;" block>删除预约任务</t-button>
         </view>
-        <view style="text-align:center;margin: 10px auto 30px;" >
-            <text>默认预约时间段为：8:00～22:00（周五为20:00）</text>
-        </view>
-        
+
         <!-- 历史预约任务 -->
         <view wx:if="{{showNowResvDetail}}">
             <t-divider></t-divider>
@@ -230,6 +230,9 @@
             <view class="resv-detail" style="margin-bottom: 30%;">
                 <view>预约账户：<text style="color: black;">{{taskStuId}}</text></view>
                 <view>创建时间：<text style="color: black;">{{taskCreateTime}}</text></view>
+                <view>预约时段：<text wx:if="{{user.resv_start_time}}" style="color: rgb(0, 0, 0);">{{user.resv_start_time + "~22:00"}}（周五20:00结束）</text>
+                    <text wx:else="{{user.resv_start_time}}" style="color: rgba(255, 0, 0, 0.808);">未设置，默认为8:00～22:00（周五20:00结束）</text>
+                </view>
                 <view style="margin-top: 5px; text-align: center;">预选座位列表</view>
                 <view style="color: black; font-size:smaller; text-align: center;">{{taskSeatNameList}}</view>
                 <view style="margin-top: 5px; text-align: center;" wx:if="{{lastResvResult}}">任务执行结果</view>
@@ -262,7 +265,8 @@
                     <t-cell wx:if="{{user.stu_phone}}" title="绑定手机号" note="{{user.stu_phone}}" leftIcon="mobile" hover />
                     <t-cell wx:if="{{isIOS && user.is_vip}}" title="通知方式" note="iOS推送服务" leftIcon="notification" hover />
                     <t-cell wx:if="{{!isIOS && user.is_vip}}" title="通知方式" note="暂无可用通知方式" leftIcon="notification" hover />
-                    <t-cell wx:if="{{isIOS && user.is_vip}}" bind:click="jumpToSubscribeNotifi" title="绑定iOS推送" leftIcon="logo-apple" hover arrow />
+                    <t-cell wx:if="{{isIOS && user.is_vip}}" bind:click="jumpToSubscribeNotifi" title="绑定iOS推送" note="{{user.bark_token?'已绑定':'未绑定'}}" leftIcon="logo-apple" hover arrow />
+                    <t-cell wx:if="{{user.is_vip}}" bind:click="jumpToSetResvDuration" title="设置预约时段" note="{{user.resv_start_time?user.resv_start_time + '~22:00':'暂未设置'}}" leftIcon="time" hover arrow />
                     <t-cell wx:if="{{user.is_vip}}" bind:click="showComment" title="求好评🤗" leftIcon="thumb-up" hover arrow />
                     <t-cell bind:click="showHelpInfo" title="常见问题指南" leftIcon="questionnaire" hover arrow />
                 </t-cell-group>

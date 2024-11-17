@@ -58,6 +58,12 @@ Page({
         }, 60000);
 
     },
+    onShow(){
+        this.setData({
+            user: wx.getStorageSync('user_info'),
+            resvDuration: wx.getStorageSync('user_info')['resv_start_time']?wx.getStorageSync('user_info')['resv_start_time'] + "~22:00":"暂未设置"
+        })
+    },
 
     data: {
         home_input_style: 'border: 3rpx solid rgba(220,220,220,1);border-radius: 16rpx;height:30rpx',
@@ -78,6 +84,7 @@ Page({
         _4fPer: 0,
         _5fPer: 0,
         _6fPer: 0,
+        _7fPer: 0,
         resvCount: 0,
         freeCount: 0,
         inLibCount: 0,
@@ -102,7 +109,8 @@ Page({
         taskCreateTime: "",
         showNowResvDetail: false,
         isIOS: wx.getStorageSync('isIOS'),
-        user: {}
+        user: {},
+        resvDuration: wx.getStorageSync('user_info')['resv_start_time']?wx.getStorageSync('user_info')['resv_start_time'] + "~22:00":"暂未设置"
     },
     methods: {
 
@@ -253,6 +261,11 @@ Page({
     jumpToSubscribeNotifi() {
         wx.navigateTo({
             url: '/pages/barkSubscribe/index',
+        });
+    },
+    jumpToSetResvDuration() {
+        wx.navigateTo({
+            url: '/pages/setResvDuration/index',
         });
     },
     // 登录区
@@ -596,6 +609,7 @@ Page({
         wx.removeStorageSync('token');
         wx.removeStorageSync('barkToken');
         wx.removeStorageSync('isVip');
+        wx.removeStorageSync('user_info');
         this.setData({
             isLogin: "false",
             nickName: "",
@@ -685,7 +699,7 @@ Page({
                 }
 
             })
-            for (let i = 2; i <= 6; i++) {
+            for (let i = 2; i <= 7; i++) {
                 wx.request({
                     url: 'https://libseat.littleking.site/wxapi/get_room_resv/' + i,
                     method: 'GET',
@@ -1187,7 +1201,9 @@ Page({
                     this.setData({
                         user: res.data,
                     });
+                    wx.setStorageSync('user_info', res.data)
                     wx.setStorageSync('barkToken', res.data.bark_token)
+                    
                 } else {
                     wx.showToast({
                         title: '获取用户失败',
