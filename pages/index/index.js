@@ -14,6 +14,11 @@ Page({
         }
     },
     onReady() {
+        const accountInfo = wx.getAccountInfoSync();
+        this.setData({
+            version: "Version: " + accountInfo.miniProgram.version
+        });
+
         setTimeout(() => {
             if (wx.getStorageSync('isAuth') == 'true') {
                 this.getLibNum();
@@ -110,7 +115,8 @@ Page({
         showNowResvDetail: false,
         isIOS: wx.getStorageSync('isIOS'),
         user: {},
-        resvDuration: wx.getStorageSync('user_info')['resv_start_time']?wx.getStorageSync('user_info')['resv_start_time'] + "~22:00":"暂未设置"
+        resvDuration: wx.getStorageSync('user_info')['resv_start_time']?wx.getStorageSync('user_info')['resv_start_time'] + "~22:00":"暂未设置",
+        version: "mp0.0.0"
     },
     methods: {
 
@@ -1015,7 +1021,7 @@ Page({
     // 展示图书馆座位图pdf
     showSeatPDF() {
         const fs = wx.getFileSystemManager();
-        const filePath = `${wx.env.USER_DATA_PATH}/seat.pdf`;
+        const filePath = `${wx.env.USER_DATA_PATH}/seat1.pdf`;
 
         wx.showLoading({
             title: '加载中',
@@ -1041,7 +1047,7 @@ Page({
             fail: () => {
                 // 文件不存在，重新下载
                 wx.downloadFile({
-                    url: 'https://libseat.littleking.site/static/seat.pdf',
+                    url: 'https://libseat.littleking.site/static/seat1.pdf',
                     success: function (res) {
                         // 保存文件到本地
                         fs.saveFile({

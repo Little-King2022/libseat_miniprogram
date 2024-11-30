@@ -376,9 +376,11 @@
         </view>
 
 
-
-        <text></text>
-        <text></text>
+        <view style="text-align: center;color: rgb(165, 165, 165);font-size: 18rpx;padding:50rpx 0 40rpx;">
+            <view>{{version}}</view>
+            <view>苏ICP备2023036460号-1X</view>
+        </view>
+        
 
     </view>
 

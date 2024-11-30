@@ -1,7 +1,8 @@
 // app.js
 App({
     data: {
-        isVip: false
+        isVip: false,
+        version: "",
     },
     onLaunch() {
         wx.showLoading({
